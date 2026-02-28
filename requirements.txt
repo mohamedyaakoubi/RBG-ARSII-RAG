@@ -1,0 +1,11 @@
+﻿# Core
+sentence-transformers>=5.1
+psycopg2-binary>=2.9
+pdfplumber>=0.10
+python-dotenv>=1.0
+streamlit>=1.30
+
+# Transitive (pinned for reproducibility)
+torch>=2.0
+transformers>=4.0
+numpy>=1.24
