@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (too large for git)
+data_pdf/
+
+# Docker volumes
+postgres_data/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Archive (dev-only scripts)
+_archive/
+
+# Model cache
+*.bin
+*.onnx
