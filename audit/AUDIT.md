@@ -1,5 +1,12 @@
 # Audit: were the scores honest, and can this RAG really be improved?
 
+> **Update.** [IMPROVEMENT.md](IMPROVEMENT.md) goes further inside the rules. It uses the same imposed model, cosine, top 3, and no invented text. On a fresh held-out set:
+> - Strict mode (question as typed): **81%** of questions have the right answer in the top 3.
+> - With transparent question preprocessing: **92%**.
+> - The original system: 63%.
+>
+> My conclusion below that strict terms left "no significant headroom" in chunking was too pessimistic. The app on this branch now runs the improved pipeline.
+
 **Scope.** The code on `main` at `28e7e14`, the challenge brief (*Développement d'un Module de Recherche Sémantique pour la Formulation en Boulangerie–Pâtisserie*), and the 35 PDFs in `data_pdf/`. I re-ran everything on PostgreSQL 16 + pgvector 0.6 with the imposed `all-MiniLM-L6-v2`. The scripts in this folder produce every number below (see [Reproduce](#6-reproduce)).
 
 ## Short answers
@@ -22,7 +29,7 @@ The artifacts can't show whether any of this was deliberate. What they do show i
 **Under strict challenge terms + strict RAG**, meaning: the imposed model, the question embedded as typed, cosine, top-3, and verbatim PDF text only.
 - The only lever left is how the PDFs are chunked. Clean section-based chunking beats a naive 500-character splitter by a wide margin: held-out Hit@3 goes from **0.44 → 0.70** (p = 0.002).
 - That honest pipeline **matches the old engineered system** on held-out questions (0.70 vs 0.72, p = 1.0), with honest scores and no invented text.
-- None of the four post-hoc chunking variants I tried gave a significant further gain.
+- None of the four post-hoc chunking variants I tried at this stage gave a significant further gain. Later work found fragment designs that do: 0.63 → 0.81 on a fresh held-out set ([IMPROVEMENT.md](IMPROVEMENT.md)).
 - With this model, honest scores for French questions against English datasheets sit around 0.35–0.65. No honest method reaches the 0.9 shown in the brief's *illustrative* example.
 
 **Relaxing only the query side**, while still displaying the true cosine:
@@ -211,7 +218,9 @@ I designed these variants after looking at TEST failures, so their TEST numbers 
 | both | 193 | 0.85 | 0.72 |
 | one fragment per PDF page | 756 | 0.77 | 0.80 |
 
-Page-level fragments look better on TEST only because 5× longer fragments contain more answers, and they are worse on DEV. With 50 questions, one standard error is about ±0.065. **Under strict terms, chunking has no significant headroom left beyond a clean, section-based table.**
+Page-level fragments look better on TEST only because 5× longer fragments contain more answers, and they are worse on DEV. With 50 questions, one standard error is about ±0.065. **None of these four variants gives a significant gain.**
+
+I first concluded from this that chunking had no headroom left under strict terms. That was wrong. Combining several content-preserving changes does help significantly, strict mode 33 → 42 of 52 on a fresh held-out set (p = 0.004). The changes are: neighboring sections grouped with the dosage, table rows, the French document also indexed in English, and no content-poor fragments. See [IMPROVEMENT.md](IMPROVEMENT.md).
 
 ### 4.6 Outside the rules: the model
 
@@ -226,6 +235,8 @@ Same faithful chunks, same plain cosine top-3; only the embedding model changes.
 Being multilingual isn't enough: the paraphrase model, which wasn't trained for retrieval, is worse. A model trained for asymmetric question → passage retrieval in many languages fixes most French failures at the same size and dimension. So the README's "we need 768d+" diagnosis is wrong: the problem is language coverage and training objective, not dimension.
 
 ## 5. What I would do
+
+*Points 1–6 are now implemented and measured on fresh held-out sets. See [IMPROVEMENT.md](IMPROVEMENT.md); the app runs them.*
 
 **Under strict challenge terms** (what I would submit):
 1. Use the faithful chunking in `pipelines.faithful_chunks`: verbatim sections, product/enzyme header, one row per fragment, `vecteur = embed(texte_fragment)`.
@@ -256,7 +267,7 @@ python -m audit.evaluate --explore --reuse   # post-hoc chunking variants → re
 python -m audit.evaluate --beyond --reuse    # out-of-rules model swap → results/beyond_rules.md
 ```
 
-`python -m audit.evaluate` rebuilds the original `embeddings` table with the original `services/ingestion_data.py`. The audit tables are named `audit_*`. Per-question results (top-3 texts, displayed and true scores, relevance) are in `results/per_query.json`.
+`python -m audit.evaluate` rebuilds the original system's table with the verbatim copy of the original pipeline in [`legacy/`](legacy/). That table is named `legacy_embeddings`, so the app's own `embeddings` table is never touched. The audit tables are named `audit_*`. Per-question results (top-3 texts, displayed and true scores, relevance) are in `results/per_query.json`.
 
 ## 7. References
 
