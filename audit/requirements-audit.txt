@@ -1,0 +1,5 @@
+# Extra packages for the audit scripts (on top of ../requirements.txt).
+# Only the relaxed "bilingual_mt" variants need the MT packages.
+langid>=1.1
+sentencepiece>=0.2
+sacremoses>=0.1
