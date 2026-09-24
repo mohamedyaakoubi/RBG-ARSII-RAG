@@ -1,0 +1,340 @@
+# Span oracle (TEST-5)
+
+For every single-answer question the current chunking misses: could ANY run of consecutive lines of the right document, with the product header (and optionally its section heading), enter the top 3, the rest of the index unchanged? "Fixable" = the best such fragment scores above the 3rd result shown.
+
+| extractor | mode | misses | fixable by some fragment | not fixable by any fragment |
+|---|---|---:|---:|---:|
+| pdfplumber-1.5 | S | 27 | 23 | 4 |
+| pdfplumber-1.5 | S+F | 10 | 10 | 0 |
+| pypdf-layout | S | 27 | 22 | 5 |
+| pypdf-layout | S+F | 10 | 10 | 0 |
+| pdftotext | S | 32 | 24 | 8 |
+| pdftotext | S+F | 11 | 9 | 2 |
+| pdftotext-layout | S | 27 | 22 | 5 |
+| pdftotext-layout | S+F | 10 | 10 | 0 |
+| pymupdf-sort | S | 27 | 22 | 5 |
+| pymupdf-sort | S+F | 10 | 10 | 0 |
+| pdfplumber-3 | S | 28 | 24 | 4 |
+| pdfplumber-3 | S+F | 10 | 10 | 0 |
+| pdfminer | S | 28 | 23 | 5 |
+| pdfminer | S+F | 11 | 9 | 2 |
+| docling | S | 30 | 24 | 6 |
+| docling | S+F | 15 | 12 | 3 |
+
+Across extractors (the best extractor for each question): S: 29 fixable, S+F: 13 fixable
+
+## Every miss
+
+- pdfplumber-1.5 S **R002**: needs 0.442, best span 0.404 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pdfplumber-1.5 S **R004**: needs 0.438, best span 0.441 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-1.5 S **R006**: needs 0.414, best span 0.408 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-50 ppm Or`
+- pdfplumber-1.5 S **R011**: needs 0.466, best span 0.497 (fixable): `BVZyme TG883 (transglutaminase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1096`
+- pdfplumber-1.5 S **R014**: needs 0.667, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15-35 ppm`
+- pdfplumber-1.5 S **R023**: needs 0.411, best span 0.419 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-1.5 S **R029**: needs 0.434, best span 0.453 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pdfplumber-1.5 S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pdfplumber-1.5 S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pdfplumber-1.5 S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pdfplumber-1.5 S **R047**: needs 0.548, best span 0.562 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.v`
+- pdfplumber-1.5 S **R049**: needs 0.502, best span 0.505 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-1.5 S **R051**: needs 0.366, best span 0.421 (fixable): `BVZyme L MAX64 (lipase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdfplumber-1.5 S **R052**: needs 0.523, best span 0.570 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com FOOD SAFTY DATA Microbiology Total plate count: <50 000UFC per g indicatives values (`
+- pdfplumber-1.5 S **R053**: needs 0.575, best span 0.581 (fixable): `BVZyme L MAX X (lipase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX X Bakery`
+- pdfplumber-1.5 S **R054**: needs 0.441, best span 0.423 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-1.5 S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfplumber-1.5 S **R059**: needs 0.234, best span 0.197 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 5201417`
+- pdfplumber-1.5 S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pdfplumber-1.5 S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pdfplumber-1.5 S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pdfplumber-1.5 S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pdfplumber-1.5 S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pdfplumber-1.5 S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pdfplumber-1.5 S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pdfplumber-1.5 S **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdfplumber-1.5 S **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdfplumber-1.5 S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pdfplumber-1.5 S+F **R053**: needs 0.596, best span 0.638 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com FOOD SAFTY DAT`
+- pdfplumber-1.5 S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfplumber-1.5 S+F **R071**: needs 0.737, best span 0.780 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pdfplumber-1.5 S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pdfplumber-1.5 S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pdfplumber-1.5 S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pdfplumber-1.5 S+F **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdfplumber-1.5 S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pdfplumber-1.5 S+F **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pypdf-layout S **R002**: needs 0.442, best span 0.404 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pypdf-layout S **R004**: needs 0.438, best span 0.443 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pypdf-layout S **R006**: needs 0.410, best span 0.407 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-50 ppm Or`
+- pypdf-layout S **R011**: needs 0.466, best span 0.495 (fixable): `BVZyme TG883 (transglutaminase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1096`
+- pypdf-layout S **R014**: needs 0.667, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15-35 ppm`
+- pypdf-layout S **R023**: needs 0.411, best span 0.413 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pypdf-layout S **R029**: needs 0.434, best span 0.449 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pypdf-layout S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pypdf-layout S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pypdf-layout S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pypdf-layout S **R047**: needs 0.548, best span 0.563 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Be`
+- pypdf-layout S **R049**: needs 0.501, best span 0.509 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pypdf-layout S **R051**: needs 0.359, best span 0.421 (fixable): `BVZyme L MAX64 (lipase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pypdf-layout S **R052**: needs 0.522, best span 0.570 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com FOOD SAFTY DATA Microbiology Total plate count: <50 000UFC per g indicatives values (`
+- pypdf-layout S **R053**: needs 0.576, best span 0.574 (not fixable): `BVZyme L MAX X (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany T`
+- pypdf-layout S **R054**: needs 0.454, best span 0.424 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pypdf-layout S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pypdf-layout S **R059**: needs 0.234, best span 0.201 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A`
+- pypdf-layout S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pypdf-layout S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pypdf-layout S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pypdf-layout S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pypdf-layout S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pypdf-layout S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pypdf-layout S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pypdf-layout S **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pypdf-layout S **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pypdf-layout S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pypdf-layout S+F **R053**: needs 0.596, best span 0.634 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: Tel: 86-756-8676888,+ 49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com FOOD SAFTY DAT`
+- pypdf-layout S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pypdf-layout S+F **R071**: needs 0.737, best span 0.780 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pypdf-layout S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pypdf-layout S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pypdf-layout S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pypdf-layout S+F **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pypdf-layout S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pypdf-layout S+F **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdftotext S **R002**: needs 0.399, best span 0.404 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pdftotext S **R004**: needs 0.438, best span 0.443 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext S **R006**: needs 0.410, best span 0.407 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-50 ppm Or`
+- pdftotext S **R011**: needs 0.466, best span 0.499 (fixable): `BVZyme TG883 (transglutaminase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, G`
+- pdftotext S **R014**: needs 0.667, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15-35 ppm`
+- pdftotext S **R023**: needs 0.411, best span 0.413 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext S **R029**: needs 0.434, best span 0.449 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pdftotext S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pdftotext S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pdftotext S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pdftotext S **R047**: needs 0.548, best span 0.563 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Be`
+- pdftotext S **R049**: needs 0.501, best span 0.509 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **R051**: needs 0.359, best span 0.423 (fixable): `BVZyme L MAX X (lipase) - ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdftotext S **R052**: needs 0.522, best span 0.568 (fixable): `BVZyme AF SX (alpha-amylase) - Salmonella: absent in 25g`
+- pdftotext S **R053**: needs 0.575, best span 0.574 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **R054**: needs 0.451, best span 0.425 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdftotext S **R059**: needs 0.232, best span 0.201 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A`
+- pdftotext S **R062**: needs 0.697, best span none contains the answer
+- pdftotext S **R066**: needs 0.583, best span none contains the answer
+- pdftotext S **R070**: needs 0.632, best span none contains the answer
+- pdftotext S **R071**: needs 0.611, best span none contains the answer
+- pdftotext S **R072**: needs 0.648, best span 0.648 (fixable): `Acide Ascorbique (E300) - Propriétés Principales: - Action oxydante : Renforce le gluten par création de ponts disulfurés Amélioration du volume : Augmente la c`
+- pdftotext S **R075**: needs 0.630, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pdftotext S **R076**: needs 0.420, best span 0.502 (fixable): `Acide Ascorbique (E300) - Propriétés Principales: Amélioration du volume : Augmente la capacité de rétention de gaz carbonique Raccourcissement de la fermentati`
+- pdftotext S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pdftotext S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pdftotext S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pdftotext S **R085**: needs 0.546, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pdftotext S **R086**: needs 0.559, best span 0.705 (fixable): `Ascorbic Acid (E300) - Primer tolerance: Increases the controlled push window`
+- pdftotext S **R087**: needs 0.552, best span 0.627 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Vérifier la date d'utilisation avant application Assurer l'homogénéité du mélange Ajuster le dosage selon le typ`
+- pdftotext S **R088**: needs 0.627, best span 0.704 (fixable): `Ascorbic Acid (E300) - Ascorbic acid (vitamin C) is an authorised food additive (E300) used as a improving breadmaking to enhance the quality of breads, biscuit`
+- pdftotext S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pdftotext S+F **R053**: needs 0.596, best span 0.638 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Microbiology: Total plate count: <50 000UFC per g`
+- pdftotext S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdftotext S+F **R062**: needs 0.697, best span none contains the answer
+- pdftotext S+F **R071**: needs 0.737, best span none contains the answer
+- pdftotext S+F **R075**: needs 0.630, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pdftotext S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pdftotext S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pdftotext S+F **R086**: needs 0.559, best span 0.705 (fixable): `Ascorbic Acid (E300) - Primer tolerance: Increases the controlled push window`
+- pdftotext S+F **R087**: needs 0.632, best span 0.690 (fixable): `Ascorbic Acid (E300) - Benefits: Reduction of fermentation time (15-30% depending on formulation)`
+- pdftotext S+F **R088**: needs 0.627, best span 0.704 (fixable): `Ascorbic Acid (E300) - Ascorbic acid (vitamin C) is an authorised food additive (E300) used as a improving breadmaking to enhance the quality of breads, biscuit`
+- pdftotext-layout S **R002**: needs 0.442, best span 0.404 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pdftotext-layout S **R004**: needs 0.438, best span 0.443 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext-layout S **R006**: needs 0.410, best span 0.407 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-50 ppm Or`
+- pdftotext-layout S **R011**: needs 0.466, best span 0.499 (fixable): `BVZyme TG883 (transglutaminase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, G`
+- pdftotext-layout S **R014**: needs 0.667, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15-35 ppm`
+- pdftotext-layout S **R023**: needs 0.411, best span 0.413 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext-layout S **R029**: needs 0.434, best span 0.449 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pdftotext-layout S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pdftotext-layout S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pdftotext-layout S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pdftotext-layout S **R047**: needs 0.548, best span 0.563 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Be`
+- pdftotext-layout S **R049**: needs 0.501, best span 0.509 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext-layout S **R051**: needs 0.359, best span 0.421 (fixable): `BVZyme L MAX64 (lipase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdftotext-layout S **R052**: needs 0.523, best span 0.570 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com FOOD SAFTY DATA Microbiology Total plate count: <50 000UFC per g indicatives values (`
+- pdftotext-layout S **R053**: needs 0.576, best span 0.574 (not fixable): `BVZyme L MAX X (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany T`
+- pdftotext-layout S **R054**: needs 0.454, best span 0.424 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext-layout S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdftotext-layout S **R059**: needs 0.234, best span 0.201 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A`
+- pdftotext-layout S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pdftotext-layout S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pdftotext-layout S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pdftotext-layout S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pdftotext-layout S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pdftotext-layout S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pdftotext-layout S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pdftotext-layout S **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdftotext-layout S **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdftotext-layout S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pdftotext-layout S+F **R053**: needs 0.596, best span 0.634 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com FOOD SAFTY DATA`
+- pdftotext-layout S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdftotext-layout S+F **R071**: needs 0.737, best span 0.781 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1g 1.5 g 50 kg 2.5 g 3.75 g 5g 7.5 g`
+- pdftotext-layout S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pdftotext-layout S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pdftotext-layout S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pdftotext-layout S+F **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdftotext-layout S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pdftotext-layout S+F **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pymupdf-sort S **R002**: needs 0.442, best span 0.404 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pymupdf-sort S **R004**: needs 0.438, best span 0.443 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- pymupdf-sort S **R006**: needs 0.410, best span 0.410 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-5 0 ppm O`
+- pymupdf-sort S **R011**: needs 0.466, best span 0.495 (fixable): `BVZyme TG883 (transglutaminase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1096`
+- pymupdf-sort S **R014**: needs 0.662, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15- 35 ppm`
+- pymupdf-sort S **R023**: needs 0.411, best span 0.413 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pymupdf-sort S **R029**: needs 0.434, best span 0.449 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pymupdf-sort S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pymupdf-sort S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pymupdf-sort S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pymupdf-sort S **R047**: needs 0.548, best span 0.563 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Be`
+- pymupdf-sort S **R049**: needs 0.501, best span 0.509 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pymupdf-sort S **R051**: needs 0.359, best span 0.421 (fixable): `BVZyme L MAX64 (lipase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pymupdf-sort S **R052**: needs 0.523, best span 0.570 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com FOOD SAFTY DATA Microbiology Total plate count: <50 000UFC per g indicatives values (`
+- pymupdf-sort S **R053**: needs 0.576, best span 0.574 (not fixable): `BVZyme L MAX X (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany T`
+- pymupdf-sort S **R054**: needs 0.454, best span 0.424 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pymupdf-sort S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pymupdf-sort S **R059**: needs 0.234, best span 0.201 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A`
+- pymupdf-sort S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pymupdf-sort S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pymupdf-sort S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pymupdf-sort S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pymupdf-sort S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pymupdf-sort S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pymupdf-sort S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pymupdf-sort S **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pymupdf-sort S **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pymupdf-sort S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pymupdf-sort S+F **R053**: needs 0.596, best span 0.634 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com FOOD SAFTY DATA`
+- pymupdf-sort S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pymupdf-sort S+F **R071**: needs 0.737, best span 0.780 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pymupdf-sort S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pymupdf-sort S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pymupdf-sort S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pymupdf-sort S+F **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pymupdf-sort S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pymupdf-sort S+F **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdfplumber-3 S **R002**: needs 0.442, best span 0.404 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - 10000 NMAU/g Application BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, e`
+- pdfplumber-3 S **R004**: needs 0.438, best span 0.441 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-3 S **R006**: needs 0.414, best span 0.408 (not fixable): `BVZyme L65 (lipase) - Function: Increase softness improve dough handling,fine regular crumb structure,improve stability and tolerance,volumn. Dosage 5-50 ppm Or`
+- pdfplumber-3 S **R011**: needs 0.466, best span 0.497 (fixable): `BVZyme TG883 (transglutaminase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1096`
+- pdfplumber-3 S **R014**: needs 0.667, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15-35 ppm`
+- pdfplumber-3 S **R020**: needs 0.674, best span 0.735 (fixable): `BVZyme L MAX X (lipase) - BVZyme L MAX X is used in bakery as it hydrolyzes esterbonds in gly cerides Function Increase volume,fine regular crumb structure,impr`
+- pdfplumber-3 S **R023**: needs 0.411, best span 0.419 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-3 S **R029**: needs 0.434, best span 0.453 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pdfplumber-3 S **R031**: needs 0.540, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pdfplumber-3 S **R037**: needs 0.618, best span 0.655 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 is transglutaminase which pr`
+- pdfplumber-3 S **R043**: needs 0.456, best span 0.528 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Store in a cool, dry place (below 20°C).`
+- pdfplumber-3 S **R047**: needs 0.548, best span 0.562 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.v`
+- pdfplumber-3 S **R049**: needs 0.502, best span 0.505 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-3 S **R051**: needs 0.366, best span 0.409 (fixable): `BVZyme L MAX X (lipase) - Staphylococcus aureus: absent in 1 g`
+- pdfplumber-3 S **R052**: needs 0.524, best span 0.572 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Stresemannstr.25,10963 Berlin, Germany Tel: 86-756-8676888,+49(0)3052014173 Mail:info@vtrbeyond.com Website:www.`
+- pdfplumber-3 S **R053**: needs 0.575, best span 0.581 (fixable): `BVZyme L MAX X (lipase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX X Bakery`
+- pdfplumber-3 S **R054**: needs 0.441, best span 0.423 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-3 S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfplumber-3 S **R059**: needs 0.234, best span 0.197 (not fixable): `BVZyme A SOFT405 (maltogenic amylase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 5201417`
+- pdfplumber-3 S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pdfplumber-3 S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pdfplumber-3 S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pdfplumber-3 S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pdfplumber-3 S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pdfplumber-3 S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pdfplumber-3 S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pdfplumber-3 S **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdfplumber-3 S **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdfplumber-3 S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pdfplumber-3 S+F **R053**: needs 0.596, best span 0.640 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com FOOD SAFTY DAT`
+- pdfplumber-3 S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfplumber-3 S+F **R071**: needs 0.737, best span 0.780 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pdfplumber-3 S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pdfplumber-3 S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pdfplumber-3 S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pdfplumber-3 S+F **R086**: needs 0.559, best span 0.642 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points`
+- pdfplumber-3 S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pdfplumber-3 S+F **R088**: needs 0.621, best span 0.723 (fixable): `Ascorbic Acid (E300) - improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizing action: Strengthe`
+- pdfminer S **R002**: needs 0.399, best span 0.411 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Zyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and extend`
+- pdfminer S **R004**: needs 0.418, best span 0.445 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: ,improve the stability and,volumn and fermentation stability. Dosage 5-50 ppm Organoleptic Aspect: free flowing p`
+- pdfminer S **R006**: needs 0.410, best span 0.430 (fixable): `BVZyme L MAX X (lipase) - 2-20`
+- pdfminer S **R011**: needs 0.466, best span 0.500 (fixable): `BVZyme TG883 (transglutaminase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, G`
+- pdfminer S **R014**: needs 0.662, best span 0.768 (fixable): `BVZyme HCF500 (xylanase) - Dosage: Suggested Optimum Dosage 15- 35 ppm`
+- pdfminer S **R029**: needs 0.408, best span 0.449 (fixable): `BVZyme GOX 110 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,109`
+- pdfminer S **R031**: needs 0.521, best span 0.558 (fixable): `BVZyme GOX 110 (glucose oxidase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme GOX 110 Bakery Enzyme Product Description Enz`
+- pdfminer S **R047**: needs 0.548, best span 0.557 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdfminer S **R048**: needs 0.465, best span 0.556 (fixable): `BVZyme L MAX X (lipase) - In accordance with European Regulations 1829/2003 and 1830/2003, no specific labeling is required. Ionization status Without irradiati`
+- pdfminer S **R049**: needs 0.501, best span 0.513 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdfminer S **R051**: needs 0.359, best span 0.423 (fixable): `BVZyme L MAX X (lipase) - ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdfminer S **R052**: needs 0.512, best span 0.570 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com FOOD SAFTY DATA Microbiology Total plate count: <50 000UFC per g indicatives values (`
+- pdfminer S **R053**: needs 0.575, best span 0.582 (fixable): `BVZyme L MAX64 (lipase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX64 Bakery `
+- pdfminer S **R054**: needs 0.454, best span 0.423 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdfminer S **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfminer S **R059**: needs 0.234, best span 0.194 (not fixable): `BVZyme AF220 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pdfminer S **R065**: needs 0.547, best span none contains the answer
+- pdfminer S **R070**: needs 0.632, best span none contains the answer
+- pdfminer S **R071**: needs 0.611, best span none contains the answer
+- pdfminer S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- pdfminer S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- pdfminer S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - L'acide ascorbique (vitamine C) est un additif alimentaire autorisé (E300) utilisé comme améliorant de panification pour renforcer la `
+- pdfminer S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- pdfminer S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- pdfminer S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- pdfminer S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- pdfminer S **R086**: needs 0.559, best span 0.644 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points -`
+- pdfminer S **R088**: needs 0.621, best span 0.716 (fixable): `Ascorbic Acid (E300) - Executive summary: improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizin`
+- pdfminer S+F **R029**: needs 0.466, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger`
+- pdfminer S+F **R053**: needs 0.596, best span 0.638 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Microbiology: Total plate count: <50 000UFC per g`
+- pdfminer S+F **R058**: needs 0.581, best span 0.642 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China.`
+- pdfminer S+F **R065**: needs 0.547, best span none contains the answer
+- pdfminer S+F **R071**: needs 0.737, best span none contains the answer
+- pdfminer S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- pdfminer S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- pdfminer S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- pdfminer S+F **R086**: needs 0.559, best span 0.644 (fixable): `Ascorbic Acid (E300) - - Tolerance to the primer: Increases the working window in controlled shoot Important points -`
+- pdfminer S+F **R087**: needs 0.627, best span 0.699 (fixable): `Ascorbic Acid (E300) - Benefits: - Reduction of fermentation time (15-30% depending on formulation)`
+- pdfminer S+F **R088**: needs 0.621, best span 0.716 (fixable): `Ascorbic Acid (E300) - Executive summary: improving breadmaking to enhance the quality of breads, biscuits and bread products Bakery. Main properties - Oxidizin`
+- docling S **R002**: needs 0.418, best span none contains the answer
+- docling S **R004**: needs 0.438, best span 0.451 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- docling S **R006**: needs 0.410, best span 0.430 (fixable): `BVZyme L MAX X (lipase) - 2-20`
+- docling S **R011**: needs 0.462, best span 0.466 (fixable): `BVZyme TG883 (transglutaminase) - 5-30 ppm`
+- docling S **R014**: needs 0.663, best span 0.626 (not fixable): `BVZyme HCF500 (xylanase) - Dosage: Standardization of Wheat Flour 5-20 ppm Bread Improvement 10-70 ppm Suggested Optimum Dosage 1535 ppm`
+- docling S **R023**: needs 0.411, best span 0.419 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- docling S **R029**: needs 0.434, best span 0.447 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - BVZyme GO MAX65 is glucose oxidase whichproduced by fermentions a selected strain of Aspergillus niger and Trichoderma rees`
+- docling S **R031**: needs 0.540, best span 0.542 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 ̈ is glucose oxidase whichproduced by fermentions a selected strain of Aspergillus niger`
+- docling S **R035**: needs 0.650, best span none contains the answer
+- docling S **R037**: needs 0.628, best span 0.642 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 ̈ istransglutaminase whichpr`
+- docling S **R043**: needs 0.457, best span 0.527 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1`
+- docling S **R047**: needs 0.558, best span 0.608 (fixable): `BVZyme AF220 (enzyme) - In accordance with European Regulations 1829/2003 and 1830/2003, no`
+- docling S **R048**: needs 0.465, best span 0.569 (fixable): `BVZyme AF220 (enzyme) - In accordance with European Regulations 1829/2003 and 1830/2003, no specific labeling is required. Ionization status Without irradiation`
+- docling S **R049**: needs 0.503, best span 0.501 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - Physicochemical: | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this p`
+- docling S **R051**: needs 0.375, best span 0.442 (fixable): `BVZyme L MAX X (lipase) - Physicochemical: | | Staphylococcus aureus: absent in 1 g |`
+- docling S **R052**: needs 0.510, best span 0.601 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: | indicatives values (m) | Salmonella: absent in 25g |`
+- docling S **R053**: needs 0.563, best span 0.568 (fixable): `BVZyme L MAX X (lipase) - Physicochemical: | Microbiology | Total plate count: <50 000UFC per g |`
+- docling S **R054**: needs 0.457, best span 0.430 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - Physicochemical: | | Mercury: <0,5 mg/kg | | | Arsenic: < 3 mg/kg | | | Lead: < 5 mg/kg |`
+- docling S **R058**: needs 0.567, best span 0.629 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1`
+- docling S **R059**: needs 0.247, best span 0.189 (not fixable): `BVZyme A SOFT305 (maltogenic amylase) - Application: BVZyme A SOFT305 ̈ is designed to improve the freshness of bread. Function Increase the softness and elasti`
+- docling S **R066**: needs 0.594, best span 0.732 (fixable): `Acide Ascorbique (E300) - | Panification directe standard | 20-60 | Production classique | | Panification avec pousse lente | 60-80 | Meilleure régularité | | B`
+- docling S **R072**: needs 0.638, best span 0.647 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec Conservation : `
+- docling S **R075**: needs 0.617, best span 0.654 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%) 4. 4. Temps d'action : 5-15 minutes après incorporation`
+- docling S **R076**: needs 0.420, best span 0.493 (fixable): `Acide Ascorbique (E300) - Propriétés Principales: - - Raccourcissement de la fermentation : Idéal pour procédés rapides et contrôlés - - Amélioration de la stru`
+- docling S **R077**: needs 0.608, best span 0.731 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: pH en solution 1% : 2,0 - 2,5`
+- docling S **R079**: needs 0.599, best span 0.755 (fixable): `Acide Ascorbique (E300) - Solubilité : Très soluble dans l'eau`
+- docling S **R080**: needs 0.570, best span 0.621 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- docling S **R085**: needs 0.540, best span 0.598 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur)`
+- docling S **R086**: needs 0.559, best span 0.643 (fixable): `Ascorbic Acid (E300) - - - Tolerance to the primer : Increases the working window in controlled shoot Important points`
+- docling S **R088**: needs 0.621, best span 0.728 (fixable): `Ascorbic Acid (E300) - Ascorbic acid (vitamin C) is an authorized food additive (E300) used to improve breadmaking to enhance the quality of breads, biscuits an`
+- docling S+F **R002**: needs 0.250, best span none contains the answer
+- docling S+F **R029**: needs 0.466, best span 0.528 (fixable): `BVZyme GOX 110 (glucose oxidase) - BVZyme GOX 110 ̈ is glucose oxidase whichproduced by fermentions a selected strain of Aspergillus niger`
+- docling S+F **R035**: needs 0.556, best span none contains the answer
+- docling S+F **R037**: needs 0.691, best span 0.699 (fixable): `BVZyme TG883 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG883 ̈ istransglutaminase whichpr`
+- docling S+F **R048**: needs 0.470, best span 0.675 (fixable): `BVZyme AF220 (enzyme) - Ionization status Without irradiation treatment`
+- docling S+F **R053**: needs 0.596, best span 0.653 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Physicochemical: | Microbiology | Total plate count: <50 000UFC per g |`
+- docling S+F **R058**: needs 0.567, best span 0.629 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,1`
+- docling S+F **R066**: needs 0.598, best span 0.803 (fixable): `Ascorbic Acid (E300) - - Standard direct Panification - 20-60 - Classic production -`
+- docling S+F **R071**: needs 0.738, best span none contains the answer
+- docling S+F **R075**: needs 0.617, best span 0.674 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg`
+- docling S+F **R077**: needs 0.608, best span 0.741 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5`
+- docling S+F **R079**: needs 0.599, best span 0.821 (fixable): `Ascorbic Acid (E300) - Solubility: Very soluble in water`
+- docling S+F **R086**: needs 0.559, best span 0.643 (fixable): `Ascorbic Acid (E300) - - - Tolerance to the primer : Increases the working window in controlled shoot Important points`
+- docling S+F **R087**: needs 0.628, best span 0.730 (fixable): `Ascorbic Acid (E300) - Ascorbic acid (vitamin C) is an authorized food additive (E300) used to improve breadmaking to enhance the quality of breads, biscuits an`
+- docling S+F **R088**: needs 0.621, best span 0.728 (fixable): `Ascorbic Acid (E300) - Ascorbic acid (vitamin C) is an authorized food additive (E300) used to improve breadmaking to enhance the quality of breads, biscuits an`

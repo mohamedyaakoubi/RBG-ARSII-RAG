@@ -458,6 +458,65 @@ def oracle_study(extractors, sets=(('the known questions', DEV_POOL, 'routes_ora
         print('\n'.join(lines[:8 + len(rows_out) + 2]))
 
 
+# ── Post-hoc (not in the plan): can the oracle's fragments work together? ───
+
+def all_spans():
+    """The maximum chunking: every run of consecutive lines of every document
+    (the oracle's candidates), all in one index. A fragment covers its lines,
+    so a run whose lines are all shown is skipped; a French run and its
+    English version share a key."""
+    tok = inrules.MODEL.tokenizer
+    limit = inrules.MODEL.max_seq_length - 2
+    frags = []
+    for path in sorted(inrules.PDF_DIR.glob('*.pdf')):
+        doc = inrules.doc_key(path.name)
+        header, lang, lines = _units(path)
+        heading = _fr_heading if lang == 'fr' else (lambda l: pipelines._match_header(l)[0] is not None)
+        versions = [(header, lang, lines)]
+        if lang == 'fr':
+            versions.append(('Ascorbic Acid (E300)', 'en', inrules.translate(lines, 'fr-en')))
+        last, heads = None, []
+        for i, l in enumerate(lines):
+            if heading(l):
+                last = i
+            heads.append(last)
+        for hd, lg, shown in versions:
+            size = [len(tok.tokenize(l)) for l in shown]
+            for i in range(len(shown)):
+                for h in [None] + ([heads[i]] if heads[i] is not None and heads[i] < i else []):
+                    total = len(tok.tokenize(hd)) + 1 + (size[h] + 1 if h is not None else 0)
+                    label = f'{shown[h]}: ' if h is not None else ''
+                    label_o = f'{lines[h]}: ' if h is not None else ''
+                    for j in range(i + 1, len(shown) + 1):
+                        total += size[j - 1]
+                        end = len(shown) if total > limit else j          # same vector for every longer run
+                        covers = {f'L{x}' for x in range(i, end)} | ({f'L{h}'} if h is not None else set())
+                        orig = f'{header} - {label_o}{" ".join(lines[i:end])}'
+                        frags.append(inrules.frag(doc, hd, [(None, label + ' '.join(shown[i:end]))], lg,
+                                                  (doc, 'span', i, end, h), covers, orig=orig))
+                        if total > limit:
+                            break
+    return frags
+
+
+def all_spans_study():
+    use_extractor(None)
+    frags = all_spans()
+    out = ['# Post-hoc: every possible fragment in one index', '',
+           'Not in ROUTES_PLAN.md: added after the span oracle, to test whether its fragments still win when they '
+           f'compete with each other. {len(frags)} fragments (every run of consecutive lines of every document, with '
+           'the product header, also after its section heading), current extractor.', '']
+    for name, questions in (('known questions', DEV_POOL), ('TEST-5', TEST5)):
+        use_extractor(None)
+        base = run(inrules.build(**inrules.FINAL_CORPUS_V2), questions)
+        spans = run(frags, questions)
+        results = {'current chunking': base, 'every possible fragment': spans}
+        out += table(results, base[0], questions, name) + ['']
+        print(name, {m: sum(v[0] for v in r.values()) for m, r in spans[0].items()}, flush=True)
+    (RESULTS / 'routes_all_spans.md').write_text('\n'.join(out) + '\n')
+    print('\n'.join(out))
+
+
 ROUTES = ['current', 'items-spec', 'items-all', 'unmerge', 'sentences', 'windows-3', 'windows-6',
           'fixed-128', 'semantic', 'fr-350', 'fr-1000']
 
@@ -524,6 +583,8 @@ if __name__ == '__main__':
         chunking_study(sys.argv[2], sys.argv[3:] or ROUTES, merge=bool(sys.argv[3:]))
     if cmd == 'oracle':
         oracle_study(sys.argv[2:])
+    if cmd == 'all-spans':
+        all_spans_study()
     if cmd == 'extractors':
         from audit.extractors import EXTRACTORS
         names = sys.argv[2:] or ['pdfplumber-1.5 (current)'] + [

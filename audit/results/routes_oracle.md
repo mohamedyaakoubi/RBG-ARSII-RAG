@@ -1,0 +1,726 @@
+# Span oracle (the known questions)
+
+For every single-answer question the current chunking misses: could ANY run of consecutive lines of the right document, with the product header (and optionally its section heading), enter the top 3, the rest of the index unchanged? "Fixable" = the best such fragment scores above the 3rd result shown.
+
+| extractor | mode | misses | fixable by some fragment | not fixable by any fragment |
+|---|---|---:|---:|---:|
+| pdfplumber-1.5 | S | 66 | 51 | 15 |
+| pdfplumber-1.5 | S+F | 20 | 18 | 2 |
+| pypdf-layout | S | 65 | 50 | 15 |
+| pypdf-layout | S+F | 19 | 17 | 2 |
+| pdftotext | S | 68 | 51 | 17 |
+| pdftotext | S+F | 21 | 17 | 4 |
+| pdftotext-layout | S | 66 | 50 | 16 |
+| pdftotext-layout | S+F | 20 | 17 | 3 |
+| pymupdf-sort | S | 66 | 50 | 16 |
+| pymupdf-sort | S+F | 20 | 17 | 3 |
+| pdfplumber-3 | S | 66 | 51 | 15 |
+| pdfplumber-3 | S+F | 19 | 17 | 2 |
+| pdfminer | S | 67 | 48 | 19 |
+| pdfminer | S+F | 22 | 16 | 6 |
+| docling | S | 67 | 41 | 26 |
+| docling | S+F | 27 | 21 | 6 |
+
+Across extractors (the best extractor for each question): S: 70 fixable, S+F: 29 fixable
+
+## Every miss
+
+- pdfplumber-1.5 S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pdfplumber-1.5 S **D05**: needs 0.374, best span 0.404 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pdfplumber-1.5 S **T01**: needs 0.407, best span 0.410 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdfplumber-1.5 S **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdfplumber-1.5 S **T20**: needs 0.680, best span 0.698 (fixable): `Acide Ascorbique (E300) - Poids Farine 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0,5 g 0,75 g 1 g 1,5 g 50 kg 2,5 g 3,75 g 5 g 7,5 g 100 kg 5 g 7,5 g 10 g 15 g 500 kg`
+- pdfplumber-1.5 S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pdfplumber-1.5 S **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfplumber-1.5 S **T28**: needs 0.446, best span 0.459 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdfplumber-1.5 S **T40**: needs 0.515, best span 0.519 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.v`
+- pdfplumber-1.5 S **T43**: needs 0.323, best span 0.251 (not fixable): `BVZyme TG MAX64 (transglutaminase) - specific labeling is required. Ionization status Without irradiation treatment Package: Carton box of 25 kg`
+- pdfplumber-1.5 S **T49**: needs 0.406, best span 0.416 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-1.5 S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pdfplumber-1.5 S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-1.5 S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pdfplumber-1.5 S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pdfplumber-1.5 S **V11**: needs 0.541, best span 0.568 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-1.5 S **V13**: needs 0.310, best span 0.324 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdfplumber-1.5 S **V14**: needs 0.416, best span 0.440 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-1.5 S **V16**: needs 0.420, best span 0.423 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-1.5 S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pdfplumber-1.5 S **V31**: needs 0.510, best span 0.542 (fixable): `BVZyme AF220 (alpha-amylase) - Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfplumber-1.5 S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pdfplumber-1.5 S **V37**: needs 0.522, best span 0.542 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-1.5 S **V39**: needs 0.380, best span 0.287 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals Cadmium: < 0,5 mg/kg Mercury: <0,5 mg/`
+- pdfplumber-1.5 S **V40**: needs 0.410, best span 0.444 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-1.5 S **V41**: needs 0.228, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdfplumber-1.5 S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pdfplumber-1.5 S **V43**: needs 0.534, best span 0.552 (fixable): `BVZyme L65 (lipase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Ge`
+- pdfplumber-1.5 S **V44**: needs 0.640, best span 0.700 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdfplumber-1.5 S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfplumber-1.5 S **V47**: needs 0.421, best span 0.504 (fixable): `Acide Ascorbique (E300) - - L'acide ascorbique est ~90% détruit pendant la cuisson (n'apporte pas de vitamine C au produit fini) - Action rapide (5-15 minutes a`
+- pdfplumber-1.5 S **V52**: needs 0.629, best span 0.643 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pdfplumber-1.5 S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pdfplumber-1.5 S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pdfplumber-1.5 S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pdfplumber-1.5 S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pdfplumber-1.5 S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pdfplumber-1.5 S **V70**: needs 0.595, best span 0.589 (not fixable): `Acide Ascorbique (E300) - Avantages: - Autorisé dans l'UE et international Limitations - Action limitée dans le temps (fermentation longue) - Inefficace sur pât`
+- pdfplumber-1.5 S **Z01**: needs 0.634, best span 0.649 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pdfplumber-1.5 S **Z08**: needs 0.525, best span 0.576 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-10 0 ppm`
+- pdfplumber-1.5 S **Z14**: needs 0.584, best span 0.654 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in gl ycerides Function Increase volume,fine regular`
+- pdfplumber-1.5 S **Z27**: needs 0.378, best span 0.376 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pdfplumber-1.5 S **Z29**: needs 0.650, best span 0.658 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfplumber-1.5 S **Z31**: needs 0.373, best span 0.337 (not fixable): `BVZyme L MAX64 (lipase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX64 Bakery`
+- pdfplumber-1.5 S **Z34**: needs 0.509, best span 0.565 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pdfplumber-1.5 S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pdfplumber-1.5 S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pdfplumber-1.5 S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pdfplumber-1.5 S **P01**: needs 0.596, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pdfplumber-1.5 S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfplumber-1.5 S **P06**: needs 0.430, best span 0.423 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery`
+- pdfplumber-1.5 S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pdfplumber-1.5 S **P10**: needs 0.392, best span 0.422 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bak`
+- pdfplumber-1.5 S **P12**: needs 0.659, best span 0.630 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-1.5 S **P16**: needs 0.525, best span 0.554 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdfplumber-1.5 S **P17**: needs 0.311, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pdfplumber-1.5 S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdfplumber-1.5 S **P28**: needs 0.737, best span 0.714 (not fixable): `BVZyme AF SX (alpha-amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF SX Bakery Enzyme Product Description Enzyme pr`
+- pdfplumber-1.5 S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfplumber-1.5 S **P37**: needs 0.349, best span 0.355 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfplumber-1.5 S **P41**: needs 0.366, best span 0.424 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.c`
+- pdfplumber-1.5 S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfplumber-1.5 S **P55**: needs 0.730, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdfplumber-1.5 S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pdfplumber-1.5 S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pdfplumber-1.5 S **P60**: needs 0.613, best span 0.614 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 520141`
+- pdfplumber-1.5 S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pdfplumber-1.5 S+F **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdfplumber-1.5 S+F **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfplumber-1.5 S+F **T40**: needs 0.731, best span 0.713 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pdfplumber-1.5 S+F **V05**: needs 0.493, best span 0.532 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 ppm Organole`
+- pdfplumber-1.5 S+F **V11**: needs 0.541, best span 0.568 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-1.5 S+F **V34**: needs 0.531, best span 0.551 (fixable): `BVZyme AF SX (alpha-amylase) - 1169/2011, this product contains the following allergen: gluten. In accordance with European Regulations 1829/2003 and 1830/2003,`
+- pdfplumber-1.5 S+F **V37**: needs 0.605, best span 0.605 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-1.5 S+F **V39**: needs 0.452, best span 0.441 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdfplumber-1.5 S+F **V44**: needs 0.640, best span 0.700 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdfplumber-1.5 S+F **V54**: needs 0.742, best span 0.788 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pdfplumber-1.5 S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pdfplumber-1.5 S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pdfplumber-1.5 S+F **V70**: needs 0.598, best span 0.617 (fixable): `Ascorbic Acid (E300) - 500 kg 25 g 37.5 g 50 g 75 g 1000 kg 50 g 75 g 100 g 150 g Technical specifications Product characteristics Name: L-ascorbic acid (Vitami`
+- pdfplumber-1.5 S+F **Z29**: needs 0.650, best span 0.658 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfplumber-1.5 S+F **Z34**: needs 0.665, best span 0.723 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme`
+- pdfplumber-1.5 S+F **P12**: needs 0.688, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pdfplumber-1.5 S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfplumber-1.5 S+F **P41**: needs 0.528, best span 0.620 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pdfplumber-1.5 S+F **P55**: needs 0.749, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pypdf-layout S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pypdf-layout S **D05**: needs 0.374, best span 0.404 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pypdf-layout S **T01**: needs 0.407, best span 0.418 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars thataid infermentation. Function Increase volume, improve gassing power, enhance softness,assistinf`
+- pypdf-layout S **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pypdf-layout S **T20**: needs 0.680, best span 0.698 (fixable): `Acide Ascorbique (E300) - Poids Farine 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0,5 g 0,75 g 1 g 1,5 g 50 kg 2,5 g 3,75 g 5 g 7,5 g 100 kg 5 g 7,5 g 10 g 15 g 500 kg`
+- pypdf-layout S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pypdf-layout S **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pypdf-layout S **T28**: needs 0.446, best span 0.459 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pypdf-layout S **T40**: needs 0.515, best span 0.527 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pypdf-layout S **T43**: needs 0.323, best span 0.251 (not fixable): `BVZyme TG MAX64 (transglutaminase) - specific labeling is required. Ionization status Without irradiation treatment Package: Carton box of 25 kg`
+- pypdf-layout S **T49**: needs 0.398, best span 0.422 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pypdf-layout S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pypdf-layout S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pypdf-layout S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pypdf-layout S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pypdf-layout S **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pypdf-layout S **V13**: needs 0.310, best span 0.324 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pypdf-layout S **V14**: needs 0.416, best span 0.437 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pypdf-layout S **V16**: needs 0.420, best span 0.421 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pypdf-layout S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pypdf-layout S **V31**: needs 0.510, best span 0.550 (fixable): `BVZyme AF SX (alpha-amylase) - Storeina cool,dryplace (below 20°C). Last updating: 05/02/2024`
+- pypdf-layout S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pypdf-layout S **V37**: needs 0.522, best span 0.543 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pypdf-layout S **V39**: needs 0.380, best span 0.287 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals Cadmium: < 0,5 mg/kg Mercury: <0,5 mg/`
+- pypdf-layout S **V40**: needs 0.410, best span 0.447 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pypdf-layout S **V41**: needs 0.228, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pypdf-layout S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pypdf-layout S **V43**: needs 0.534, best span 0.556 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pypdf-layout S **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pypdf-layout S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pypdf-layout S **V47**: needs 0.421, best span 0.504 (fixable): `Acide Ascorbique (E300) - - L'acide ascorbique est ~90% détruit pendant la cuisson (n'apporte pas de vitamine C au produit fini) - Action rapide (5-15 minutes a`
+- pypdf-layout S **V52**: needs 0.629, best span 0.643 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pypdf-layout S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pypdf-layout S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pypdf-layout S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pypdf-layout S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pypdf-layout S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pypdf-layout S **V70**: needs 0.595, best span 0.589 (not fixable): `Acide Ascorbique (E300) - Avantages: - Autorisé dans l'UE et international Limitations - Action limitée dans le temps (fermentation longue) - Inefficace sur pât`
+- pypdf-layout S **Z01**: needs 0.634, best span 0.648 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pypdf-layout S **Z08**: needs 0.525, best span 0.570 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-100 ppm`
+- pypdf-layout S **Z14**: needs 0.584, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- pypdf-layout S **Z27**: needs 0.378, best span 0.373 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pypdf-layout S **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pypdf-layout S **Z31**: needs 0.373, best span 0.348 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pypdf-layout S **Z34**: needs 0.509, best span 0.564 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pypdf-layout S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pypdf-layout S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pypdf-layout S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pypdf-layout S **P01**: needs 0.596, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pypdf-layout S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pypdf-layout S **P06**: needs 0.430, best span 0.420 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+ 49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB7 09 Baker`
+- pypdf-layout S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pypdf-layout S **P10**: needs 0.392, best span 0.423 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bake`
+- pypdf-layout S **P12**: needs 0.685, best span 0.636 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pypdf-layout S **P17**: needs 0.311, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pypdf-layout S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pypdf-layout S **P28**: needs 0.735, best span 0.736 (fixable): `BVZyme AF SX (alpha-amylase) - Storeina cool,dryplace (below 20°C).`
+- pypdf-layout S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pypdf-layout S **P37**: needs 0.349, best span 0.349 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pypdf-layout S **P41**: needs 0.366, best span 0.419 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pypdf-layout S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pypdf-layout S **P55**: needs 0.721, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pypdf-layout S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pypdf-layout S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pypdf-layout S **P60**: needs 0.613, best span 0.611 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Descri`
+- pypdf-layout S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pypdf-layout S+F **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pypdf-layout S+F **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pypdf-layout S+F **T40**: needs 0.731, best span 0.717 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pypdf-layout S+F **V05**: needs 0.493, best span 0.529 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 ppm`
+- pypdf-layout S+F **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pypdf-layout S+F **V37**: needs 0.603, best span 0.604 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pypdf-layout S+F **V39**: needs 0.452, best span 0.441 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pypdf-layout S+F **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pypdf-layout S+F **V54**: needs 0.742, best span 0.788 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pypdf-layout S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pypdf-layout S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pypdf-layout S+F **V70**: needs 0.598, best span 0.617 (fixable): `Ascorbic Acid (E300) - 500 kg 25 g 37.5 g 50 g 75 g 1000 kg 50 g 75 g 100 g 150 g Technical specifications Product characteristics Name: L-ascorbic acid (Vitami`
+- pypdf-layout S+F **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pypdf-layout S+F **Z34**: needs 0.665, best span 0.722 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pypdf-layout S+F **P12**: needs 0.686, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pypdf-layout S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pypdf-layout S+F **P41**: needs 0.528, best span 0.622 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pypdf-layout S+F **P55**: needs 0.749, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdftotext S **D04**: needs 0.595, best span 0.710 (fixable): `Acide Ascorbique (E300) - boulangerie. Propriétés Principales - - - - - - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pdftotext S **D05**: needs 0.374, best span 0.404 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pdftotext S **T01**: needs 0.407, best span 0.410 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdftotext S **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Temperature: 15-25°C, humidity < 60% Mode of Employment in Production 1. 1. Precise weighing: Use precision balance `
+- pdftotext S **T20**: needs 0.641, best span none contains the answer
+- pdftotext S **T21**: needs 0.486, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pdftotext S **T22**: needs 0.526, best span 0.729 (fixable): `Ascorbic Acid (E300) - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdftotext S **T28**: needs 0.446, best span 0.459 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdftotext S **T40**: needs 0.515, best span 0.527 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pdftotext S **T43**: needs 0.318, best span 0.276 (not fixable): `BVZyme TG MAX64 (transglutaminase) - Without irradiation treatment Package: Carton box of 25 kg`
+- pdftotext S **T49**: needs 0.395, best span 0.422 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pdftotext S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pdftotext S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pdftotext S **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext S **V13**: needs 0.310, best span 0.324 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdftotext S **V14**: needs 0.416, best span 0.437 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext S **V16**: needs 0.420, best span 0.421 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pdftotext S **V31**: needs 0.510, best span 0.542 (fixable): `BVZyme AF220 (alpha-amylase) - Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pdftotext S **V37**: needs 0.522, best span 0.543 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext S **V39**: needs 0.377, best span 0.298 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - ASR: <30 UFC per g`
+- pdftotext S **V40**: needs 0.410, best span 0.447 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext S **V41**: needs 0.231, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdftotext S **V42**: needs 0.417, best span 0.419 (fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pdftotext S **V43**: needs 0.534, best span 0.556 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext S **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext S **V45**: needs 0.302, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext S **V47**: needs 0.421, best span none contains the answer
+- pdftotext S **V52**: needs 0.629, best span 0.645 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Vérifier la date d'utilisation avant application Assurer l'homogénéité du mélange Ajuster le dosage selon le typ`
+- pdftotext S **V57**: needs 0.646, best span 0.725 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - - - - V`
+- pdftotext S **V60**: needs 0.567, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pdftotext S **V61**: needs 0.565, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pdftotext S **V62**: needs 0.630, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pdftotext S **V67**: needs 0.542, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pdftotext S **V68**: needs 0.621, best span 0.729 (fixable): `Ascorbic Acid (E300) - Benefits: - - - - - - Visible improvement in volume and structure Reduction of fermentation time (15-30% depending on formulation)`
+- pdftotext S **V70**: needs 0.594, best span 0.593 (not fixable): `Acide Ascorbique (E300) - Propriétés Principales: - Action oxydante : Renforce le gluten par création de ponts disulfurés Amélioration du volume : Augmente la c`
+- pdftotext S **Z01**: needs 0.634, best span 0.648 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdftotext S **Z08**: needs 0.525, best span 0.570 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-100 ppm`
+- pdftotext S **Z14**: needs 0.584, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- pdftotext S **Z27**: needs 0.369, best span 0.373 (fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pdftotext S **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdftotext S **Z31**: needs 0.360, best span 0.348 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **Z34**: needs 0.509, best span 0.564 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdftotext S **Z41**: needs 0.627, best span none contains the answer
+- pdftotext S **Z43**: needs 0.585, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pdftotext S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pdftotext S **Z48**: needs 0.606, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pdftotext S **P01**: needs 0.591, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pdftotext S **P03**: needs 0.265, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext S **P06**: needs 0.430, best span 0.427 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery `
+- pdftotext S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pdftotext S **P10**: needs 0.392, best span 0.423 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bake`
+- pdftotext S **P12**: needs 0.686, best span 0.634 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext S **P16**: needs 0.525, best span 0.554 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdftotext S **P17**: needs 0.319, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pdftotext S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdftotext S **P28**: needs 0.737, best span 0.714 (not fixable): `BVZyme AF SX (alpha-amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF SX Bakery Enzyme Product Description Enzyme pr`
+- pdftotext S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdftotext S **P37**: needs 0.349, best span 0.349 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdftotext S **P41**: needs 0.366, best span 0.419 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pdftotext S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdftotext S **P55**: needs 0.721, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdftotext S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pdftotext S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pdftotext S **P60**: needs 0.613, best span 0.611 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Descri`
+- pdftotext S+F **T10**: needs 0.719, best span 0.738 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pdftotext S+F **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Temperature: 15-25°C, humidity < 60% Mode of Employment in Production 1. 1. Precise weighing: Use precision balance `
+- pdftotext S+F **T22**: needs 0.526, best span 0.729 (fixable): `Ascorbic Acid (E300) - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdftotext S+F **T40**: needs 0.731, best span 0.717 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pdftotext S+F **V05**: needs 0.493, best span 0.529 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 ppm`
+- pdftotext S+F **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext S+F **V34**: needs 0.531, best span 0.560 (fixable): `BVZyme AF SX (alpha-amylase) - 1169/2011, this product contains the following allergen: gluten. In accordance with European Regulations 1829/2003 and 1830/2003,`
+- pdftotext S+F **V37**: needs 0.605, best span 0.604 (not fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext S+F **V39**: needs 0.452, best span 0.447 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals`
+- pdftotext S+F **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext S+F **V54**: needs 0.742, best span none contains the answer
+- pdftotext S+F **V62**: needs 0.630, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pdftotext S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pdftotext S+F **V68**: needs 0.621, best span 0.729 (fixable): `Ascorbic Acid (E300) - Benefits: - - - - - - Visible improvement in volume and structure Reduction of fermentation time (15-30% depending on formulation)`
+- pdftotext S+F **V70**: needs 0.601, best span 0.647 (fixable): `Ascorbic Acid (E300) - Alternative Natural leaven`
+- pdftotext S+F **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdftotext S+F **Z34**: needs 0.665, best span 0.722 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pdftotext S+F **P12**: needs 0.686, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pdftotext S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdftotext S+F **P41**: needs 0.528, best span 0.622 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pdftotext S+F **P55**: needs 0.749, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdftotext-layout S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pdftotext-layout S **D05**: needs 0.374, best span 0.404 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pdftotext-layout S **T01**: needs 0.407, best span 0.410 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdftotext-layout S **T11**: needs 0.619, best span 0.665 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdftotext-layout S **T20**: needs 0.680, best span 0.700 (fixable): `Acide Ascorbique (E300) - Poids Farine 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0,5 g 0,75 g 1g 1,5 g 50 kg 2,5 g 3,75 g 5g 7,5 g 100 kg 5g 7,5 g 10 g 15 g 500 kg 25`
+- pdftotext-layout S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pdftotext-layout S **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdftotext-layout S **T28**: needs 0.446, best span 0.459 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdftotext-layout S **T40**: needs 0.515, best span 0.527 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pdftotext-layout S **T43**: needs 0.323, best span 0.251 (not fixable): `BVZyme TG MAX64 (transglutaminase) - specific labeling is required. Ionization status Without irradiation treatment Package: Carton box of 25 kg`
+- pdftotext-layout S **T49**: needs 0.398, best span 0.422 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext-layout S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pdftotext-layout S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext-layout S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pdftotext-layout S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pdftotext-layout S **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext-layout S **V13**: needs 0.310, best span 0.324 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pdftotext-layout S **V14**: needs 0.416, best span 0.437 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext-layout S **V16**: needs 0.420, best span 0.421 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdftotext-layout S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pdftotext-layout S **V31**: needs 0.510, best span 0.542 (fixable): `BVZyme AF220 (alpha-amylase) - Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext-layout S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pdftotext-layout S **V37**: needs 0.522, best span 0.543 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext-layout S **V39**: needs 0.380, best span 0.287 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals Cadmium: < 0,5 mg/kg Mercury: <0,5 mg/`
+- pdftotext-layout S **V40**: needs 0.410, best span 0.447 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext-layout S **V41**: needs 0.228, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdftotext-layout S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pdftotext-layout S **V43**: needs 0.534, best span 0.556 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext-layout S **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext-layout S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext-layout S **V47**: needs 0.421, best span 0.504 (fixable): `Acide Ascorbique (E300) - - L'acide ascorbique est ~90% détruit pendant la cuisson (n'apporte pas de vitamine C au produit fini) - Action rapide (5-15 minutes a`
+- pdftotext-layout S **V52**: needs 0.629, best span 0.643 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pdftotext-layout S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pdftotext-layout S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pdftotext-layout S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pdftotext-layout S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pdftotext-layout S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pdftotext-layout S **V70**: needs 0.595, best span 0.589 (not fixable): `Acide Ascorbique (E300) - Avantages: - Autorisé dans l'UE et international Limitations - Action limitée dans le temps (fermentation longue) - Inefficace sur pât`
+- pdftotext-layout S **Z01**: needs 0.634, best span 0.648 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdftotext-layout S **Z08**: needs 0.525, best span 0.570 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-100 ppm`
+- pdftotext-layout S **Z14**: needs 0.584, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- pdftotext-layout S **Z27**: needs 0.378, best span 0.373 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pdftotext-layout S **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdftotext-layout S **Z31**: needs 0.373, best span 0.348 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext-layout S **Z34**: needs 0.509, best span 0.564 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdftotext-layout S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pdftotext-layout S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pdftotext-layout S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pdftotext-layout S **P01**: needs 0.596, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pdftotext-layout S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdftotext-layout S **P06**: needs 0.430, best span 0.427 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery `
+- pdftotext-layout S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pdftotext-layout S **P10**: needs 0.392, best span 0.423 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bake`
+- pdftotext-layout S **P12**: needs 0.685, best span 0.636 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdftotext-layout S **P16**: needs 0.525, best span 0.554 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdftotext-layout S **P17**: needs 0.311, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pdftotext-layout S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdftotext-layout S **P28**: needs 0.737, best span 0.714 (not fixable): `BVZyme AF SX (alpha-amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF SX Bakery Enzyme Product Description Enzyme pr`
+- pdftotext-layout S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdftotext-layout S **P37**: needs 0.349, best span 0.349 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdftotext-layout S **P41**: needs 0.366, best span 0.419 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pdftotext-layout S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdftotext-layout S **P55**: needs 0.721, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdftotext-layout S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pdftotext-layout S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pdftotext-layout S **P60**: needs 0.613, best span 0.611 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Descri`
+- pdftotext-layout S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pdftotext-layout S+F **T11**: needs 0.619, best span 0.665 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdftotext-layout S+F **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdftotext-layout S+F **T40**: needs 0.731, best span 0.717 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pdftotext-layout S+F **V05**: needs 0.493, best span 0.529 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 ppm`
+- pdftotext-layout S+F **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdftotext-layout S+F **V34**: needs 0.531, best span 0.551 (fixable): `BVZyme AF SX (alpha-amylase) - 1169/2011, this product contains the following allergen: gluten. In accordance with European Regulations 1829/2003 and 1830/2003,`
+- pdftotext-layout S+F **V37**: needs 0.605, best span 0.604 (not fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdftotext-layout S+F **V39**: needs 0.452, best span 0.441 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pdftotext-layout S+F **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdftotext-layout S+F **V54**: needs 0.742, best span 0.790 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1g 1.5 g 50 kg 2.5 g 3.75 g 5g 7.5 g`
+- pdftotext-layout S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pdftotext-layout S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pdftotext-layout S+F **V70**: needs 0.598, best span 0.617 (fixable): `Ascorbic Acid (E300) - 500 kg 25 g 37.5 g 50 g 75 g 1000 kg 50 g 75 g 100 g 150 g Technical specifications Product characteristics Name: L-ascorbic acid (Vitami`
+- pdftotext-layout S+F **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdftotext-layout S+F **Z34**: needs 0.665, best span 0.722 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pdftotext-layout S+F **P12**: needs 0.686, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pdftotext-layout S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdftotext-layout S+F **P41**: needs 0.528, best span 0.622 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pdftotext-layout S+F **P55**: needs 0.749, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pymupdf-sort S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pymupdf-sort S **D05**: needs 0.374, best span 0.404 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pymupdf-sort S **T01**: needs 0.407, best span 0.410 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pymupdf-sort S **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pymupdf-sort S **T20**: needs 0.680, best span 0.698 (fixable): `Acide Ascorbique (E300) - Poids Farine 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0,5 g 0,75 g 1 g 1,5 g 50 kg 2,5 g 3,75 g 5 g 7,5 g 100 kg 5 g 7,5 g 10 g 15 g 500 kg`
+- pymupdf-sort S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pymupdf-sort S **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pymupdf-sort S **T28**: needs 0.446, best span 0.459 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pymupdf-sort S **T40**: needs 0.515, best span 0.527 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pymupdf-sort S **T43**: needs 0.323, best span 0.251 (not fixable): `BVZyme TG MAX64 (transglutaminase) - specific labeling is required. Ionization status Without irradiation treatment Package: Carton box of 25 kg`
+- pymupdf-sort S **T49**: needs 0.398, best span 0.422 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pymupdf-sort S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pymupdf-sort S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pymupdf-sort S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pymupdf-sort S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pymupdf-sort S **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pymupdf-sort S **V13**: needs 0.310, best span 0.324 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten `
+- pymupdf-sort S **V14**: needs 0.416, best span 0.437 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- pymupdf-sort S **V16**: needs 0.420, best span 0.421 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- pymupdf-sort S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pymupdf-sort S **V31**: needs 0.510, best span 0.542 (fixable): `BVZyme AF220 (alpha-amylase) - Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pymupdf-sort S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pymupdf-sort S **V37**: needs 0.521, best span 0.543 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pymupdf-sort S **V39**: needs 0.380, best span 0.287 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals Cadmium: < 0,5 mg/kg Mercury: <0,5 mg/`
+- pymupdf-sort S **V40**: needs 0.410, best span 0.447 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pymupdf-sort S **V41**: needs 0.228, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pymupdf-sort S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pymupdf-sort S **V43**: needs 0.534, best span 0.552 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pymupdf-sort S **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pymupdf-sort S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pymupdf-sort S **V47**: needs 0.421, best span 0.504 (fixable): `Acide Ascorbique (E300) - - L'acide ascorbique est ~90% détruit pendant la cuisson (n'apporte pas de vitamine C au produit fini) - Action rapide (5-15 minutes a`
+- pymupdf-sort S **V52**: needs 0.629, best span 0.643 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pymupdf-sort S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pymupdf-sort S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pymupdf-sort S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pymupdf-sort S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pymupdf-sort S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pymupdf-sort S **V70**: needs 0.595, best span 0.589 (not fixable): `Acide Ascorbique (E300) - Avantages: - Autorisé dans l'UE et international Limitations - Action limitée dans le temps (fermentation longue) - Inefficace sur pât`
+- pymupdf-sort S **Z01**: needs 0.624, best span 0.648 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pymupdf-sort S **Z08**: needs 0.525, best span 0.570 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-100 ppm`
+- pymupdf-sort S **Z14**: needs 0.584, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- pymupdf-sort S **Z27**: needs 0.378, best span 0.373 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pymupdf-sort S **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pymupdf-sort S **Z31**: needs 0.373, best span 0.348 (not fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pymupdf-sort S **Z34**: needs 0.509, best span 0.564 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pymupdf-sort S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pymupdf-sort S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pymupdf-sort S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pymupdf-sort S **P01**: needs 0.596, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pymupdf-sort S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pymupdf-sort S **P06**: needs 0.430, best span 0.427 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery `
+- pymupdf-sort S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pymupdf-sort S **P10**: needs 0.392, best span 0.423 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bake`
+- pymupdf-sort S **P12**: needs 0.685, best span 0.636 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pymupdf-sort S **P16**: needs 0.525, best span 0.554 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pymupdf-sort S **P17**: needs 0.311, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pymupdf-sort S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pymupdf-sort S **P28**: needs 0.737, best span 0.714 (not fixable): `BVZyme AF SX (alpha-amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF SX Bakery Enzyme Product Description Enzyme pr`
+- pymupdf-sort S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pymupdf-sort S **P37**: needs 0.349, best span 0.349 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pymupdf-sort S **P41**: needs 0.366, best span 0.419 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pymupdf-sort S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pymupdf-sort S **P55**: needs 0.721, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pymupdf-sort S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pymupdf-sort S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pymupdf-sort S **P60**: needs 0.613, best span 0.611 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Descri`
+- pymupdf-sort S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pymupdf-sort S+F **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pymupdf-sort S+F **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pymupdf-sort S+F **T40**: needs 0.731, best span 0.717 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pymupdf-sort S+F **V05**: needs 0.493, best span 0.529 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pymupdf-sort S+F **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pymupdf-sort S+F **V34**: needs 0.531, best span 0.551 (fixable): `BVZyme AF SX (alpha-amylase) - 1169/2011, this product contains the following allergen: gluten. In accordance with European Regulations 1829/2003 and 1830/2003,`
+- pymupdf-sort S+F **V37**: needs 0.605, best span 0.604 (not fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pymupdf-sort S+F **V39**: needs 0.452, best span 0.441 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g`
+- pymupdf-sort S+F **V44**: needs 0.640, best span 0.703 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pymupdf-sort S+F **V54**: needs 0.742, best span 0.788 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pymupdf-sort S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pymupdf-sort S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pymupdf-sort S+F **V70**: needs 0.598, best span 0.617 (fixable): `Ascorbic Acid (E300) - 500 kg 25 g 37.5 g 50 g 75 g 1000 kg 50 g 75 g 100 g 150 g Technical specifications Product characteristics Name: L-ascorbic acid (Vitami`
+- pymupdf-sort S+F **Z29**: needs 0.650, best span 0.656 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pymupdf-sort S+F **Z34**: needs 0.665, best span 0.722 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pymupdf-sort S+F **P12**: needs 0.686, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pymupdf-sort S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pymupdf-sort S+F **P41**: needs 0.528, best span 0.622 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pymupdf-sort S+F **P55**: needs 0.748, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdfplumber-3 S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pdfplumber-3 S **D05**: needs 0.374, best span 0.400 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX Xused in bakery and bread applications. Function Optimize Gluten extensibility a`
+- pdfplumber-3 S **T01**: needs 0.407, best span 0.406 (not fixable): `BVZyme AF SX (alpha-amylase) - 5-25ppm`
+- pdfplumber-3 S **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdfplumber-3 S **T20**: needs 0.680, best span 0.698 (fixable): `Acide Ascorbique (E300) - Poids Farine 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0,5 g 0,75 g 1 g 1,5 g 50 kg 2,5 g 3,75 g 5 g 7,5 g 100 kg 5 g 7,5 g 10 g 15 g 500 kg`
+- pdfplumber-3 S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pdfplumber-3 S **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfplumber-3 S **T28**: needs 0.446, best span 0.451 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX Xused in bakery and bread applications. Function Optimize Gluten e`
+- pdfplumber-3 S **T40**: needs 0.515, best span 0.519 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.v`
+- pdfplumber-3 S **T43**: needs 0.323, best span 0.251 (not fixable): `BVZyme TG MAX64 (transglutaminase) - specific labeling is required. Ionization status Without irradiation treatment Package: Carton box of 25 kg`
+- pdfplumber-3 S **T49**: needs 0.406, best span 0.416 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-3 S **V02**: needs 0.355, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- pdfplumber-3 S **V05**: needs 0.409, best span 0.422 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-3 S **V07**: needs 0.366, best span 0.350 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10 ppm`
+- pdfplumber-3 S **V08**: needs 0.529, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- pdfplumber-3 S **V11**: needs 0.541, best span 0.568 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-3 S **V13**: needs 0.314, best span 0.323 (fixable): `BVZyme HCF MAX X (xylanase) - biotechnology. Activity 23500 XylH/g Application BVZyme HCF MAX Xused in bakery and bread applications. Function Optimize Gluten e`
+- pdfplumber-3 S **V14**: needs 0.416, best span 0.440 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-3 S **V16**: needs 0.420, best span 0.423 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfplumber-3 S **V27**: needs 0.437, best span 0.483 (fixable): `BVZyme AF110 (alpha-amylase) - Activity: 150000 SKB/g Application BVZyme AF110 is used in baking as it acts on damaged starch produced during the milling proces`
+- pdfplumber-3 S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pdfplumber-3 S **V37**: needs 0.522, best span 0.542 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-3 S **V39**: needs 0.380, best span 0.289 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - acceptable: 10m ASR: <30 UFC perg Staphylococcus aureus: absent in 1 g Heavy metals Cadmium: < 0,5 mg/kg Mercury: <0,5 mg/k`
+- pdfplumber-3 S **V40**: needs 0.410, best span 0.444 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-3 S **V41**: needs 0.228, best span 0.166 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdfplumber-3 S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pdfplumber-3 S **V43**: needs 0.534, best span 0.552 (fixable): `BVZyme L65 (lipase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Ge`
+- pdfplumber-3 S **V44**: needs 0.640, best span 0.700 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdfplumber-3 S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfplumber-3 S **V47**: needs 0.421, best span 0.504 (fixable): `Acide Ascorbique (E300) - - L'acide ascorbique est ~90% détruit pendant la cuisson (n'apporte pas de vitamine C au produit fini) - Action rapide (5-15 minutes a`
+- pdfplumber-3 S **V52**: needs 0.629, best span 0.643 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pdfplumber-3 S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pdfplumber-3 S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pdfplumber-3 S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pdfplumber-3 S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pdfplumber-3 S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pdfplumber-3 S **V70**: needs 0.595, best span 0.589 (not fixable): `Acide Ascorbique (E300) - Avantages: - Autorisé dans l'UE et international Limitations - Action limitée dans le temps (fermentation longue) - Inefficace sur pât`
+- pdfplumber-3 S **Z01**: needs 0.634, best span 0.649 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pdfplumber-3 S **Z08**: needs 0.525, best span 0.576 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-10 0 ppm`
+- pdfplumber-3 S **Z14**: needs 0.584, best span 0.654 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in gl ycerides Function Increase volume,fine regular`
+- pdfplumber-3 S **Z27**: needs 0.378, best span 0.376 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pdfplumber-3 S **Z29**: needs 0.650, best span 0.658 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfplumber-3 S **Z31**: needs 0.373, best span 0.337 (not fixable): `BVZyme L MAX64 (lipase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX64 Bakery`
+- pdfplumber-3 S **Z34**: needs 0.509, best span 0.565 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pdfplumber-3 S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pdfplumber-3 S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pdfplumber-3 S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pdfplumber-3 S **P01**: needs 0.596, best span 0.557 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - BVZyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and exte`
+- pdfplumber-3 S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfplumber-3 S **P06**: needs 0.430, best span 0.423 (not fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery`
+- pdfplumber-3 S **P08**: needs 0.413, best span 0.454 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Allergens In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the foll`
+- pdfplumber-3 S **P10**: needs 0.392, best span 0.422 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bak`
+- pdfplumber-3 S **P12**: needs 0.659, best span 0.630 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TE`
+- pdfplumber-3 S **P14**: needs 0.492, best span 0.508 (fixable): `BVZyme TG MAX63 (transglutaminase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme TG MAX63 Bakery Enzyme Product Description `
+- pdfplumber-3 S **P17**: needs 0.311, best span 0.329 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pdfplumber-3 S **P21**: needs 0.315, best span 0.330 (fixable): `BVZyme TG MAX63 (transglutaminase) - Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme TG MAX63 Bakery Enzyme Product Description Enzyme preparation based `
+- pdfplumber-3 S **P25**: needs 0.464, best span 0.460 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the `
+- pdfplumber-3 S **P28**: needs 0.736, best span 0.770 (fixable): `BVZyme AF SX (alpha-amylase) - Storeinacool,dryplace(below20°C).`
+- pdfplumber-3 S **P30**: needs 0.393, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfplumber-3 S **P37**: needs 0.349, best span 0.360 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfplumber-3 S **P41**: needs 0.366, best span 0.424 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.c`
+- pdfplumber-3 S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfplumber-3 S **P55**: needs 0.730, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdfplumber-3 S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pdfplumber-3 S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pdfplumber-3 S **P60**: needs 0.613, best span 0.614 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)3 0 520141`
+- pdfplumber-3 S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pdfplumber-3 S+F **T11**: needs 0.619, best span 0.666 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): Biscuits/Crackers 30-50 Reduced dosage Maximum authorised strength 300 EU/France/Belgium Quick Conversion Table`
+- pdfplumber-3 S+F **T22**: needs 0.526, best span 0.723 (fixable): `Ascorbic Acid (E300) - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfplumber-3 S+F **T40**: needs 0.731, best span 0.713 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pdfplumber-3 S+F **V05**: needs 0.493, best span 0.532 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-40 ppm Organole`
+- pdfplumber-3 S+F **V11**: needs 0.541, best span 0.568 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength,improve the stability and,volumn and fermentation stability. Dosage 5-50 pp`
+- pdfplumber-3 S+F **V37**: needs 0.605, best span 0.605 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.2`
+- pdfplumber-3 S+F **V39**: needs 0.452, best span 0.439 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC perg Staphylococcus aureus: absent in 1 g`
+- pdfplumber-3 S+F **V44**: needs 0.640, best span 0.700 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdfplumber-3 S+F **V54**: needs 0.742, best span 0.788 (fixable): `Ascorbic Acid (E300) - Weight Flour 50 ppm 75 ppm 100 ppm 150 ppm 10 kg 0.5 g 0.75 g 1 g 1.5 g 50 kg 2.5 g 3.75 g 5 g 7.5 g`
+- pdfplumber-3 S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pdfplumber-3 S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pdfplumber-3 S+F **V70**: needs 0.598, best span 0.617 (fixable): `Ascorbic Acid (E300) - 500 kg 25 g 37.5 g 50 g 75 g 1000 kg 50 g 75 g 100 g 150 g Technical specifications Product characteristics Name: L-ascorbic acid (Vitami`
+- pdfplumber-3 S+F **Z29**: needs 0.650, best span 0.658 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfplumber-3 S+F **Z34**: needs 0.665, best span 0.723 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)3 0 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme`
+- pdfplumber-3 S+F **P12**: needs 0.688, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pdfplumber-3 S+F **P30**: needs 0.372, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfplumber-3 S+F **P41**: needs 0.528, best span 0.620 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pdfplumber-3 S+F **P55**: needs 0.749, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdfminer S **D04**: needs 0.590, best span 0.703 (fixable): `Acide Ascorbique (E300) - Résumé Général: boulangerie. Propriétés Principales - Action oxydante : Renforce le gluten par création de ponts disulfurés`
+- pdfminer S **D05**: needs 0.374, best span 0.405 (fixable): `BVZyme HCF MAX X (xylanase) - Activity: XylH/g 23500 Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- pdfminer S **T01**: needs 0.407, best span 0.410 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdfminer S **T11**: needs 0.619, best span 0.659 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Temperature: 15-25°C, humidity < 60% Mode of Employment in Production 1. 1. Precise weighing: Use precision balance `
+- pdfminer S **T20**: needs 0.679, best span none contains the answer
+- pdfminer S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- pdfminer S **T22**: needs 0.526, best span 0.729 (fixable): `Ascorbic Acid (E300) - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfminer S **T28**: needs 0.446, best span 0.463 (fixable): `BVZyme HCF MAX X (xylanase) - Product Description: xylanase. Effective material Fungal xylanase produced by fermenting a selected unique strain of Aspergillus ,`
+- pdfminer S **T38**: needs 0.648, best span none contains the answer
+- pdfminer S **T40**: needs 0.515, best span 0.527 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vt`
+- pdfminer S **T41**: needs 0.572, best span 0.646 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - 1169/2011, this product contains the following allergens: gluten`
+- pdfminer S **T43**: needs 0.323, best span 0.276 (not fixable): `BVZyme TG MAX64 (transglutaminase) - Without irradiation treatment Package: Carton box of 25 kg`
+- pdfminer S **T49**: needs 0.412, best span 0.418 (fixable): `BVZyme L MAX64 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdfminer S **V02**: needs 0.354, best span 0.380 (fixable): `BVZyme TG881 (transglutaminase) - 10-40`
+- pdfminer S **V05**: needs 0.409, best span 0.426 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: ,improve the stability and,volumn and fermentation stability. Dosage 5-50 ppm Organoleptic Aspect: free flowing p`
+- pdfminer S **V07**: needs 0.366, best span 0.366 (not fixable): `BVZyme AF220 (alpha-amylase) - Function: fermentation. Dosage 2-10`
+- pdfminer S **V08**: needs 0.526, best span 0.569 (fixable): `BVZyme TG881 (transglutaminase) - 10-40`
+- pdfminer S **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pdfminer S **V13**: needs 0.309, best span 0.320 (fixable): `BVZyme HCF MAX X (xylanase) - Product Description: xylanase. Effective material Fungal xylanase produced by fermenting a selected unique strain of Aspergillus ,`
+- pdfminer S **V31**: needs 0.510, best span 0.542 (fixable): `BVZyme AF220 (alpha-amylase) - Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfminer S **V32**: needs 0.742, best span 0.761 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C).`
+- pdfminer S **V37**: needs 0.521, best span 0.536 (fixable): `BVZyme L65 (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNIC`
+- pdfminer S **V39**: needs 0.381, best span 0.298 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - ASR: <30 UFC per g`
+- pdfminer S **V40**: needs 0.414, best span 0.442 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Description Enzyme preparation `
+- pdfminer S **V41**: needs 0.228, best span 0.159 (not fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens GMO status In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product co`
+- pdfminer S **V42**: needs 0.426, best span 0.419 (not fixable): `BVZyme L MAX64 (lipase) - Physicochemical: Moisture: <15% VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China`
+- pdfminer S **V43**: needs 0.534, best span 0.552 (fixable): `BVZyme L65 (lipase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: `
+- pdfminer S **V44**: needs 0.640, best span 0.711 (fixable): `BVZyme L65 (lipase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbey`
+- pdfminer S **V45**: needs 0.310, best span 0.291 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfminer S **V47**: needs 0.421, best span none contains the answer
+- pdfminer S **V52**: needs 0.629, best span 0.641 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - Assurer l'homogénéité du mélange - Ajuster le dosage selon le type de farine utilisée - Documenter chaque utilis`
+- pdfminer S **V57**: needs 0.646, best span 0.722 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - Vérifie`
+- pdfminer S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- pdfminer S **V61**: needs 0.555, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- pdfminer S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- pdfminer S **V67**: needs 0.540, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- pdfminer S **V70**: needs 0.595, best span 0.643 (fixable): `Acide Ascorbique (E300) - Avantages: Malte Inconvénients Temps long, instabilité Coût plus élevé Coût combiné Action plus faible Réglementation`
+- pdfminer S **Z01**: needs 0.620, best span 0.648 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdfminer S **Z08**: needs 0.525, best span 0.586 (fixable): `BVZyme AMG880 (amyloglucosidase) - 10-100`
+- pdfminer S **Z14**: needs 0.580, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- pdfminer S **Z27**: needs 0.381, best span 0.373 (not fixable): `BVZyme AF220 (alpha-amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germ`
+- pdfminer S **Z29**: needs 0.650, best span 0.639 (not fixable): `BVZyme A SOFT305 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfminer S **Z31**: needs 0.373, best span 0.341 (not fixable): `BVZyme L MAX64 (lipase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme L MAX64 Bakery `
+- pdfminer S **Z34**: needs 0.509, best span 0.564 (fixable): `BVZyme A SOFT405 (maltogenic amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtr`
+- pdfminer S **Z41**: needs 0.627, best span none contains the answer
+- pdfminer S **Z43**: needs 0.572, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- pdfminer S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- pdfminer S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- pdfminer S **P01**: needs 0.591, best span 0.568 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - Zyme A FRESH101 is designed to improve the freshness of bread. Function Improve freshness, enhance softness, and extend`
+- pdfminer S **P03**: needs 0.263, best span 0.224 (not fixable): `BVZyme L MAX63 (lipase) - Storage: Date of minimum durability: 24 months. Store in a cool, dry place (below 20°C). Last updating: 05/02/2024`
+- pdfminer S **P06**: needs 0.427, best span 0.427 (fixable): `BVZyme HCB709 (xylanase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme HCB709 Bakery `
+- pdfminer S **P08**: needs 0.409, best span 0.466 (fixable): `BVZyme AMG1400 (amyloglucosidase) - GMO status: In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this product contains the fo`
+- pdfminer S **P10**: needs 0.392, best span 0.423 (fixable): `BVZyme AF330 (alpha-amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF330 Bake`
+- pdfminer S **P12**: needs 0.666, best span 0.634 (not fixable): `BVZyme L MAX X (lipase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TEC`
+- pdfminer S **P16**: needs 0.525, best span 0.554 (fixable): `BVZyme AF SX (alpha-amylase) - Application: producing sugars that aid in fermentation. Function Increase volume, improve gassing power, enhance softness, assist`
+- pdfminer S **P17**: needs 0.305, best span 0.333 (fixable): `BVZyme AF220 (alpha-amylase) - 11000 FAU/g Application BVZyme AF220 is used in baking as it acts on damaged starch produced during the milling process by hydrol`
+- pdfminer S **P25**: needs 0.444, best span 0.450 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg Allergens GMO status In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product co`
+- pdfminer S **P28**: needs 0.737, best span 0.714 (not fixable): `BVZyme AF SX (alpha-amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme AF SX Bakery Enzyme Product Description Enzyme pr`
+- pdfminer S **P29**: needs 0.758, best span none contains the answer
+- pdfminer S **P30**: needs 0.397, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfminer S **P37**: needs 0.349, best span 0.349 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfminer S **P41**: needs 0.366, best span 0.419 (fixable): `BVZyme AF110 (alpha-amylase) - Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.co`
+- pdfminer S **P43**: needs 0.306, best span 0.330 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase which produced by fermentions a selected strain of Aspergillus niger Activity 10000U/g `
+- pdfminer S **P55**: needs 0.723, best span 0.775 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- pdfminer S **P56**: needs 0.760, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- pdfminer S **P59**: needs 0.697, best span 0.711 (fixable): `BVZyme L MAX65 (lipase) - Storage: Date of minimum durability: 24 months.`
+- pdfminer S **P60**: needs 0.613, best span 0.611 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme A FRESH202 Bakery Enzyme Product Descri`
+- pdfminer S+F **T10**: needs 0.719, best span 0.744 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- pdfminer S+F **T11**: needs 0.619, best span 0.659 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Temperature: 15-25°C, humidity < 60% Mode of Employment in Production 1. 1. Precise weighing: Use precision balance `
+- pdfminer S+F **T22**: needs 0.526, best span 0.729 (fixable): `Ascorbic Acid (E300) - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to`
+- pdfminer S+F **T38**: needs 0.693, best span none contains the answer
+- pdfminer S+F **T40**: needs 0.731, best span 0.717 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.`
+- pdfminer S+F **V05**: needs 0.493, best span 0.529 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 pp`
+- pdfminer S+F **V11**: needs 0.541, best span 0.572 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- pdfminer S+F **V34**: needs 0.531, best span 0.577 (fixable): `BVZyme TG883 (transglutaminase) - 1169/2011, this product contains the following allergens: gluten In accordance with European Regulations 1829/2003 and 1830/20`
+- pdfminer S+F **V37**: needs 0.605, best span 0.603 (not fixable): `BVZyme A FRESH101 (maltogenic amylase) - In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the following a`
+- pdfminer S+F **V39**: needs 0.452, best span 0.447 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - acceptable: 10m ASR: <30 UFC per g Staphylococcus aureus: absent in 1 g Heavy metals`
+- pdfminer S+F **V44**: needs 0.640, best span 0.711 (fixable): `BVZyme L65 (lipase) - Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbey`
+- pdfminer S+F **V54**: needs 0.742, best span 0.795 (fixable): `Ascorbic Acid (E300) - Weight Flour 10 kg 50 kg 100 kg 500 kg 1 000 kg 75 ppm 0.75 g 3.75 g`
+- pdfminer S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- pdfminer S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- pdfminer S+F **V70**: needs 0.598, best span 0.643 (fixable): `Acide Ascorbique (E300) - Avantages: Malte Inconvénients Temps long, instabilité Coût plus élevé Coût combiné Action plus faible Réglementation`
+- pdfminer S+F **Z29**: needs 0.650, best span 0.639 (not fixable): `BVZyme A SOFT305 (maltogenic amylase) - No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Ber`
+- pdfminer S+F **Z34**: needs 0.665, best span 0.722 (fixable): `BVZyme A FRESH202 (maltogenic amylase) - Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.com Website: www.vtrbeyond.com TECHNICAL DATA SHEET BVZyme `
+- pdfminer S+F **P12**: needs 0.678, best span 0.819 (fixable): `BVZyme L MAX X (lipase) - Lead: < 5 mg/kg`
+- pdfminer S+F **P29**: needs 0.693, best span none contains the answer
+- pdfminer S+F **P30**: needs 0.377, best span 0.591 (fixable): `BVZyme AF330 (alpha-amylase) - Moisture: <15%`
+- pdfminer S+F **P41**: needs 0.528, best span 0.622 (fixable): `BVZyme AF110 (alpha-amylase) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 B`
+- pdfminer S+F **P55**: needs 0.748, best span 0.877 (fixable): `BVZyme L55 (lipase) - Website: www.vtrbeyond.com`
+- docling S **D04**: needs 0.590, best span 0.679 (fixable): `Acide Ascorbique (E300) - 7. 2. Valider avec ton chef (comme tu l'as fait ✓) 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivem`
+- docling S **T01**: needs 0.400, best span 0.399 (not fixable): `BVZyme AF330 (alpha-amylase) - 2-10`
+- docling S **T11**: needs 0.619, best span 0.656 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Storage: 18-24 months (depending on storage conditions) Temperature: 15-25°C, humidity < 60% Mode of Employment in P`
+- docling S **T16**: needs 0.454, best span 0.495 (fixable): `BVZyme L MAX64 (lipase) - BVZyme L MAX64 ̈ is lipase whichproduced by fermentions a selected strain of Aspergillus sp and Trichoderma sp Activity 47000U/g Appli`
+- docling S **T20**: needs 0.680, best span none contains the answer
+- docling S **T21**: needs 0.482, best span 0.522 (fixable): `Acide Ascorbique (E300) - Mode d'Emploi en Production: 2. 2. Incorporation : Ajouter au mélange d'ingrédients secs AVANT hydratation`
+- docling S **T22**: needs 0.526, best span 0.700 (fixable): `Ascorbic Acid (E300) - - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to the finished product)`
+- docling S **T28**: needs 0.446, best span 0.442 (not fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- docling S **T40**: needs 0.515, best span 0.486 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - TECHNICAL DATA SHEET BVZyme A FRESH202 ̈ Bakery Enzyme ProductDescription Enzyme preparation based on Maltogenic Amylas`
+- docling S **T43**: needs 0.331, best span 0.251 (not fixable): `BVZyme HCF400 (xylanase) - 1169/2011, this product contains the following allergens: gluten According to European Regulations 1829/2003 and 1830/2003, no specif`
+- docling S **T49**: needs 0.398, best span 0.383 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Physicochemical: Stresemann str.25,10963 Berlin, Germany Tel: 86-756-8676888,+49 (0)30 52014173 Mail: info@vtrbeyond.co`
+- docling S **V02**: needs 0.353, best span 0.362 (fixable): `BVZyme TG881 (transglutaminase) - 10-40 ppm`
+- docling S **V05**: needs 0.409, best span 0.410 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-50 p`
+- docling S **V07**: needs 0.366, best span 0.357 (not fixable): `BVZyme AF330 (alpha-amylase) - Function: fermentation. Dosage 2-10`
+- docling S **V08**: needs 0.526, best span 0.548 (fixable): `BVZyme TG MAX63 (transglutaminase) - 5-25 ppm`
+- docling S **V13**: needs 0.309, best span 0.309 (not fixable): `BVZyme HCF MAX X (xylanase) - Activity: 23500 XylH/g Application BVZyme HCF MAX X used in bakery and bread applications. Function Optimize Gluten extensibility `
+- docling S **V14**: needs 0.429, best span 0.426 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- docling S **V16**: needs 0.420, best span 0.424 (fixable): `BVZyme GOX 110 (glucose oxidase) - Function: ,improve stability and tolerance,volumn.`
+- docling S **V31**: needs 0.489, best span 0.533 (fixable): `BVZyme AF330 (alpha-amylase) - Store in a cool, dry place (below 20¡C).`
+- docling S **V32**: needs 0.741, best span 0.753 (fixable): `BVZyme A FRESH101 (maltogenic amylase) - Storage Date of minimum durability: 24 months. Store in a cool, dry place (below 20¡C).`
+- docling S **V37**: needs 0.518, best span 0.528 (fixable): `BVZyme A SOFT205 (maltogenic amylase) - BVZyme A SOFT205 ̈ Bakery Enzyme Product Description Enzyme preparation based on Maltogenic Amylase Effective material B`
+- docling S **V39**: needs 0.388, best span 0.304 (not fixable): `BVZyme AMG880 (amyloglucosidase) - Physicochemical: | acceptable: 10m | ASR: <30 UFC per g | | | Staphylococcus aureus: absent in 1 g | | Heavy metals | Cadmium`
+- docling S **V41**: needs 0.230, best span 0.179 (not fixable): `BVZyme L MAX X (lipase) - Physicochemical: | | Lead: < 5 mg/kg | | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011,`
+- docling S **V42**: needs 0.426, best span 0.417 (not fixable): `BVZyme L MAX65 (lipase) - Moisture: <15%`
+- docling S **V43**: needs 0.533, best span 0.542 (fixable): `BVZyme L65 (lipase) - ProductDescription: Enzyme preparation based on Effective material BVZyme L65 ̈ is lipase whichproduced by fermentions a selected strain o`
+- docling S **V44**: needs 0.640, best span 0.658 (fixable): `BVZyme AF110 (enzyme) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, `
+- docling S **V45**: needs 0.315, best span 0.287 (not fixable): `BVZyme L65 (lipase) - Date of minimum durability: 24 months. Store in a cool, dry place (below 20¡C). Last updating: 05/02/2024`
+- docling S **V47**: needs 0.421, best span none contains the answer
+- docling S **V52**: needs 0.629, best span 0.640 (fixable): `Acide Ascorbique (E300) - Points de Contrôle: - - Ajuster le dosage selon le type de farine utilisée - - Documenter chaque utilisation (traçabilité) Avantages e`
+- docling S **V57**: needs 0.648, best span 0.724 (fixable): `Acide Ascorbique (E300) - 4. 4. Temps d'action : 5-15 minutes après incorporation 5. 5. Température : Efficacité optimale à 25-30°C Points de Contrôle - - Vérif`
+- docling S **V60**: needs 0.558, best span 0.691 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit: Formule chimique : C6H8O6`
+- docling S **V61**: needs 0.551, best span 0.674 (fixable): `Acide Ascorbique (E300) - Formule chimique : C6H8O6`
+- docling S **V62**: needs 0.609, best span 0.675 (fixable): `Acide Ascorbique (E300) - Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais e`
+- docling S **V67**: needs 0.542, best span 0.647 (fixable): `Acide Ascorbique (E300) - 8. 3. Documenter les résultats (volume, miette, couleur) 9. 4. Ajuster progressivement selon les résultats`
+- docling S **V70**: needs 0.599, best span 0.623 (fixable): `Acide Ascorbique (E300) - | Alternative | Avantages | Inconvénients | |----------------------------|-----------------------|-------------------------| | Levain `
+- docling S **Z01**: needs 0.635, best span 0.625 (not fixable): `BVZyme A SOFT305 (maltogenic amylase) - BVZyme A SOFT305 ̈ Bakery Enzyme Product Description Enzyme preparation based on Maltogenic Amylase Effective material B`
+- docling S **Z12**: needs 0.479, best span 0.506 (fixable): `BVZyme GO MAX 65 (glucose oxidase) - Function: Increase dough tolerance and strength ,improve the stability and,volumn and fermentation stability. Dosage 5-40 p`
+- docling S **Z14**: needs 0.584, best span 0.659 (fixable): `BVZyme L MAX64 (lipase) - 47000U/g Application BVZyme L MAX64 is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume,fine regular `
+- docling S **Z27**: needs 0.389, best span 0.418 (fixable): `BVZyme AF220 (enzyme) - In accordance with European Regulations 1829/2003 and 1830/2003, no`
+- docling S **Z31**: needs 0.352, best span 0.351 (not fixable): `BVZyme L MAX X (lipase) - Physicochemical: | | Lead: < 5 mg/kg | | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011,`
+- docling S **Z34**: needs 0.509, best span 0.545 (fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: Website: www.vtrbeyond.com`
+- docling S **Z43**: needs 0.577, best span 0.674 (fixable): `Acide Ascorbique (E300) - 3. 3. Alternative : Diluer dans une petite quantité d'eau (solution 1-2%)`
+- docling S **Z45**: needs 0.588, best span 0.696 (fixable): `Acide Ascorbique (E300) - pH en solution 1% : 2,0 - 2,5 Densité : ~1,65 g/cm3 Conditionnement Recommandé Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage :`
+- docling S **Z46**: needs 0.435, best span 0.542 (fixable): `Acide Ascorbique (E300) - Caractéristiques du Produit Dénomination : Acide L-ascorbique (Vitamine C) Formule chimique : C6H8O6`
+- docling S **Z48**: needs 0.604, best span 0.751 (fixable): `Acide Ascorbique (E300) - Durée de vie : 18-24 mois (à vérifier à l'achat)`
+- docling S **P01**: needs 0.592, best span none contains the answer
+- docling S **P03**: needs 0.269, best span 0.237 (not fixable): `BVZyme L MAX63 (lipase) - Physicochemical: | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains`
+- docling S **P06**: needs 0.430, best span 0.456 (fixable): `BVZyme HCB709 (xylanase) - BVZyme HCB709 ̈ used in bakery and bread applications. Function Increase elasticity, boost proofing stability, optimize gluten extens`
+- docling S **P08**: needs 0.408, best span 0.488 (fixable): `BVZyme AMG1400 (amyloglucosidase) - Physicochemical: | Allergens | In compliance with the list of major allergens in Annex II of Regulation 1169/2011, this prod`
+- docling S **P10**: needs 0.405, best span 0.398 (not fixable): `BVZyme AF330 (alpha-amylase) - TECHNICAL DATA SHEET BVZyme AF330 ̈ Bakery Enzyme Product Description Enzyme preparation based on amylase Effective material Fung`
+- docling S **P12**: needs 0.664, best span 0.631 (not fixable): `BVZyme L MAX X (lipase) - Application: BVZyme L MAX X is used in bakery as it hydrolyzes esterbonds in glycerides Function Increase volume ,fine regular crumb s`
+- docling S **P14**: needs 0.492, best span 0.500 (fixable): `BVZyme TG MAX63 (transglutaminase) - Product Description: Enzyme preparation based on Transglutaminase Effective material BVZyme TG MAX63 ̈ isenzymatic stystem `
+- docling S **P19**: needs 0.464, best span 0.523 (fixable): `BVZyme A FRESH303 (maltogenic amylase) - BVZyme A FRESH303 ̈ Bakery Enzyme Product Description Enzyme preparation based on Maltogenic Amylase Effective material`
+- docling S **P23**: needs 0.454, best span 0.587 (fixable): `BVZyme L55 (lipase) - Physicochemical: | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the`
+- docling S **P25**: needs 0.430, best span 0.482 (fixable): `BVZyme L MAX X (lipase) - Physicochemical: | | Lead: < 5 mg/kg | | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011,`
+- docling S **P28**: needs 0.737, best span 0.706 (not fixable): `BVZyme AF SX (alpha-amylase) - Physicochemical: | Ionizationstatus | Withoutirradiationtreatment | Packaging Carton box of 25 kg Storage Date of minimum durabil`
+- docling S **P32**: needs 0.651, best span 0.636 (not fixable): `BVZyme AF220 (enzyme) - TECHNICAL DATA SHEET BVZyme AF220 ̈ Bakery Enzyme Product Description Enzyme preparation based on amylase Effective material Fungal alph`
+- docling S **P37**: needs 0.349, best span 0.347 (not fixable): `BVZyme GO MAX 63 (glucose oxidase) - 10000U/g Application BVZyme GO MAX 63 is used in bakery to enhance the gluten networks Function Increase dough tolerance an`
+- docling S **P38**: needs 0.700, best span 0.752 (fixable): `BVZyme L65 (lipase) - BVZyme L65 ̈ is lipase whichproduced by fermentions a selected strain of Aspergillus sp Activity 1080 U/g Application BVZyme L65 is used i`
+- docling S **P40**: needs 0.321, best span 0.505 (fixable): `BVZyme TG MAX64 (transglutaminase) - | Ionization status | Without irradiation treatment | Package:`
+- docling S **P41**: needs 0.403, best span 0.369 (not fixable): `BVZyme AF110 (enzyme) - 150000 SKB/g Application BVZyme AF110 ̈ is used in baking as it acts on damaged starch produced during the milling process by hydrolysis`
+- docling S **P43**: needs 0.306, best span 0.328 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - BVZyme GO MAX 63 is glucose oxidase whichproduced by fermentions a selected strain of Aspergillus niger Activity 10000U/g A`
+- docling S **P45**: needs 0.789, best span 0.809 (fixable): `BVZyme AF110 (enzyme) - Dosage 2-12`
+- docling S **P46**: needs 0.255, best span 0.295 (fixable): `BVZyme L MAX X (lipase) - BVZyme L MAX X ̈ is lipase whichproduced by fermentions a selected strain of Aspergillus niger Activity U/g 3300 Application BVZyme L `
+- docling S **P55**: needs 0.721, best span 0.662 (not fixable): `BVZyme L55 (lipase) - BVZyme L55 ̈ is lipase whichproduced by fermentions a selected strain of Aspergillus oryzae Activity 1120 U/g Application BVZyme L55 is us`
+- docling S **P56**: needs 0.766, best span 0.852 (fixable): `BVZyme A SOFT305 (maltogenic amylase) - Last updating: 05/02/2024`
+- docling S **P60**: needs 0.647, best span 0.630 (not fixable): `BVZyme A FRESH202 (maltogenic amylase) - Physicochemical: | GMO status | In accordance with European Regulations 1829/2003 and 1830/2003, no specific labeling i`
+- docling S+F **T10**: needs 0.719, best span 0.726 (fixable): `Ascorbic Acid (E300) - pH in solution 1%: 2.0 - 2.5 Density: ~1.65 g/cm3 Recommended Packing Standard sizes: 500 g, 1 kg, 5 kg, 25 kg Packaging: Sealed bags, co`
+- docling S+F **T11**: needs 0.619, best span 0.656 (fixable): `Ascorbic Acid (E300) - Recommended Packing: Storage: 18-24 months (depending on storage conditions) Temperature: 15-25°C, humidity < 60% Mode of Employment in P`
+- docling S+F **T22**: needs 0.526, best span 0.700 (fixable): `Ascorbic Acid (E300) - - - Ascorbic acid is ~90% destroyed during cooking (does not bring vitamin C to the finished product)`
+- docling S+F **T40**: needs 0.731, best span 0.710 (not fixable): `BVZyme A FRESH303 (maltogenic amylase) - BVZyme A FRESH303 ̈ is an amylolytic enzyme system prepared from selected strains of Bacillus subtilis ."`
+- docling S+F **T45**: needs 0.489, best span 0.640 (fixable): `BVZyme L MAX X (lipase) - | Heavy metals | Cadmium: < 0,5 mg/kg | | | Mercury: <0,5 mg/kg | | | Arsenic: < 3 mg/kg | | | Lead: < 5 mg/kg |`
+- docling S+F **V34**: needs 0.531, best span 0.563 (fixable): `BVZyme AF220 (enzyme) - GMO status 1169/2011, this product contains the following allergen: gluten. In accordance with European Regulations 1829/2003 and 1830/2`
+- docling S+F **V37**: needs 0.634, best span 0.603 (not fixable): `BVZyme AF220 (enzyme) - Allergens: In compliance with the list of major allergens in Annex II of Regulation GMO status 1169/2011, this product contains the foll`
+- docling S+F **V39**: needs 0.452, best span 0.451 (not fixable): `BVZyme GO MAX 65 (glucose oxidase) - | acceptable: 10m | ASR: <30 UFC per g | | | Staphylococcus aureus: absent in 1 g |`
+- docling S+F **V44**: needs 0.640, best span 0.658 (fixable): `BVZyme AF110 (enzyme) - VTR&beyond No.8, Pingbei Rd1, Science and Technology Industry Zone, Nanping, Zhuhai , Guangdong, China. Stresemann str.25,10963 Berlin, `
+- docling S+F **V51**: needs 0.676, best span 0.842 (fixable): `Ascorbic Acid (E300) - Recommended doses (ppm*): - Standard direct Panification - 20-60 - Classic production -`
+- docling S+F **V54**: needs 0.742, best span none contains the answer
+- docling S+F **V62**: needs 0.609, best span 0.837 (fixable): `Ascorbic Acid (E300) - Density: ~1.65 g/cm3`
+- docling S+F **V63**: needs 0.623, best span 0.678 (fixable): `Acide Ascorbique (E300) - Conditionnement Recommandé: Formats courants : 500 g, 1 kg, 5 kg, 25 kg Emballage : Sacs scellés, endroit frais et sec`
+- docling S+F **V70**: needs 0.604, best span 0.626 (fixable): `Ascorbic Acid (E300) - Natural, soft action, higher cost`
+- docling S+F **Z34**: needs 0.660, best span 0.667 (fixable): `BVZyme L65 (lipase) - BVZyme L65 ̈ Bakery Enzyme ProductDescription Enzyme preparation based on Effective material BVZyme L65 ̈ is lipase whichproduced by ferme`
+- docling S+F **Z39**: needs 0.592, best span 0.824 (fixable): `Ascorbic Acid (E300) - - Standard direct Panification - 20-60 - Classic production -`
+- docling S+F **P01**: needs 0.258, best span none contains the answer
+- docling S+F **P06**: needs 0.544, best span 0.740 (fixable): `BVZyme HCB709 (xylanase) - Lead: < 5 mg/kg`
+- docling S+F **P12**: needs 0.658, best span 0.824 (fixable): `BVZyme L MAX X (lipase) - | | Lead: < 5 mg/kg |`
+- docling S+F **P19**: needs 0.604, best span 0.738 (fixable): `BVZyme A FRESH303 (maltogenic amylase) - Effective material BVZyme A FRESH303 ̈ is an amylolytic enzyme system prepared from selected strains of Bacillus subtil`
+- docling S+F **P23**: needs 0.509, best span 0.806 (fixable): `BVZyme L55 (lipase) - Physicochemical: | Allergens | In compliance with the list of major allergens in Annex II, Regulation 1169/2011, this product contains the`
+- docling S+F **P25**: needs 0.448, best span 0.669 (fixable): `BVZyme L MAX X (lipase) - | | Lead: < 5 mg/kg |`
+- docling S+F **P37**: needs 0.333, best span 0.505 (fixable): `BVZyme GO MAX 63 (glucose oxidase) - | | Mercury: <0,5 mg/kg |`
+- docling S+F **P38**: needs 0.696, best span 0.752 (fixable): `BVZyme L65 (lipase) - BVZyme L65 ̈ is lipase whichproduced by fermentions a selected strain of Aspergillus sp Activity 1080 U/g Application BVZyme L65 is used i`
+- docling S+F **P40**: needs 0.419, best span 0.648 (fixable): `BVZyme TG MAX64 (transglutaminase) - | Ionization status | Without irradiation treatment | Package:`
+- docling S+F **P41**: needs 0.560, best span 0.587 (fixable): `BVZyme AF110 (enzyme) - Function: Increase volume, improve gassing power, enhance softness, assist in fermentation. Dosage 2-12 ppm Organoleptic Aspect: free fl`
+- docling S+F **P55**: needs 0.747, best span 0.746 (not fixable): `BVZyme L55 (lipase) - Function: Increase volume ,fine regular crumb structure,improve stability and tolerance,improve dough handling. Dosage 5-5 0 ppm Organolep`
