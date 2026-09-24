@@ -34,3 +34,5 @@ _archive/
 # Model cache
 *.bin
 *.onnx
+
+cache/extractions/

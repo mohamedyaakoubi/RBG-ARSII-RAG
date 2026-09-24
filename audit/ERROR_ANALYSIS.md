@@ -12,7 +12,7 @@ The scores so far came from an automatic check: a result counted as right if it 
 |---|---|---|
 | right but incomplete | Z07, Z17 | A family question ("dosage range of the xylanases", "bacterial or fungal?") has 9 products, and only 3 fit. Z17 shows only fungal xylanases, although the bacterial HCB ones exist. |
 | right answer at rank 2, another product's value at rank 1 | Z03 | GO MAX 63's dose above TG MAX64's. The product name is shown, but a hasty reader could take the wrong value. |
-| PDF extraction glitch in the text shown | Z08, Z53 | "10-10 0 ppm" for 10-100 ppm (the PDF itself spaces the digits) |
+| PDF extraction glitch in the text shown | Z08, Z53 | "10-10 0 ppm" for 10-100 ppm. I first wrote that the PDF itself spaces the digits. It doesn't: the page shows "10-100 ppm", and pdfplumber inserts a stray space character that the sheet contains ([ROUTES.md](ROUTES.md)). |
 | translation quirk | Z52 | "Malte" (malt) became "Malta"; the French original is shown next to it |
 | wasted slot (bug) | Z57 | In a multi-product answer, the same AMG880 application text appears twice. Duplicates are only removed within each sub-search, not across them. |
 | no "I don't know" | Y01–Y03 | Unanswerable questions still get three results with ordinary-looking scores (0.41–0.65 here) |
