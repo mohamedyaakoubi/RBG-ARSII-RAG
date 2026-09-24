@@ -2,7 +2,9 @@
 
 Every single-answer question of TEST-2 and TEST-3 that the final system misses.
 "rank" = rank of the first correct fragment in the full cosine ranking; "gap" = its score minus the
-3rd result's. "oracle" = the same question asked in the documents' own words.
+3rd result's. "oracle" = the question rephrased in the documents' own words, written knowing the
+answer. It is a diagnostic, not a fix: users will not phrase questions this way, and every row below
+is still a wrong answer for the person who asked it.
 
 | set | id | mode | question | rank | gap | oracle phrasing | oracle rank | product filter fixes it |
 |---|---|---|---|---:|---:|---|---:|---|
@@ -60,6 +62,6 @@ Every single-answer question of TEST-2 and TEST-3 that the final system misses.
 | TEST-3 | Z45 | S | Quel est le pH de l'acide ascorbique en solution ? | 13 | -0.063 | ascorbic acid pH | 1 |  |
 | TEST-3 | Z48 | S | Quelle est la durée de vie de l'acide ascorbique ? | 6 | -0.032 | ascorbic acid shelf life | 1 |  |
 
-**S**: 37 failures; correct fragment at rank 4-5 (lost to the top-3 cut): 7; found in the top 3 by the oracle phrasing: 35; fixed by a product-code filter: 3.
+**S**: 37 failures; correct fragment at rank 4-5 (lost to the top-3 cut): 7; found in the top 3 by the oracle phrasing (diagnostic only): 35; fixed by a product-code filter: 3.
 
-**S+**: 16 failures; correct fragment at rank 4-5 (lost to the top-3 cut): 7; found in the top 3 by the oracle phrasing: 15; fixed by a product-code filter: 4.
+**S+**: 16 failures; correct fragment at rank 4-5 (lost to the top-3 cut): 7; found in the top 3 by the oracle phrasing (diagnostic only): 15; fixed by a product-code filter: 4.

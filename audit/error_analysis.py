@@ -6,12 +6,15 @@ Why do the remaining answers fail, and could anything inside the rules fix them?
 For every held-out question the final system (v2) misses, on TEST-2 and TEST-3:
   1. rank of the first correct fragment in the full cosine ranking, and its
      score gap to the 3rd result (near miss vs far miss);
-  2. oracle test: the same question asked in the documents' own words. If
-     even that fails, no pipeline under these rules can fix it; if it works,
-     the failure is a gap between user wording and document wording;
+  2. oracle test, a diagnostic and not a fix: the question rephrased in the
+     documents' own words, written knowing where the answer is. No user can
+     be expected to phrase it that way, so a question it finds still counts
+     as a failure. If even that fails, wording is not the cause; if it works,
+     the answer is in the index but the model does not connect the user's
+     words to it;
   3. whether a product-code filter (answer from the named product's sheet)
      would fix it, checked on every question that names a product.
-Writes audit/results/error_analysis.md.
+Writes audit/results/error_analysis.md and error_analysis.json.
 """
 import json
 import re
@@ -87,7 +90,9 @@ def main():
     out = ['# Error analysis of the final system (v2)', '',
            'Every single-answer question of TEST-2 and TEST-3 that the final system misses.',
            '"rank" = rank of the first correct fragment in the full cosine ranking; "gap" = its score minus the',
-           '3rd result\'s. "oracle" = the same question asked in the documents\' own words.', '',
+           '3rd result\'s. "oracle" = the question rephrased in the documents\' own words, written knowing the',
+           'answer. It is a diagnostic, not a fix: users will not phrase questions this way, and every row below',
+           'is still a wrong answer for the person who asked it.', '',
            '| set | id | mode | question | rank | gap | oracle phrasing | oracle rank | product filter fixes it |',
            '|---|---|---|---|---:|---:|---|---:|---|']
     for r in rows:
@@ -100,7 +105,8 @@ def main():
         oracle_ok = sum(1 for r in rs if r['oracle_rank'] and r['oracle_rank'] <= 3)
         filt = sum(1 for r in rs if r['product_filter'])
         out += ['', f'**{mode}**: {len(rs)} failures; correct fragment at rank 4-5 (lost to the top-3 cut): {near}; '
-                    f'found in the top 3 by the oracle phrasing: {oracle_ok}; fixed by a product-code filter: {filt}.']
+                    f'found in the top 3 by the oracle phrasing (diagnostic only): {oracle_ok}; '
+                    f'fixed by a product-code filter: {filt}.']
     (ROOT / 'audit' / 'results' / 'error_analysis.md').write_text('\n'.join(out) + '\n')
     (ROOT / 'audit' / 'results' / 'error_analysis.json').write_text(json.dumps(rows, ensure_ascii=False, indent=1))
     print('\n'.join(out))
