@@ -78,3 +78,20 @@ Every route on pypdf's layout-mode text, same questions ([results/routes_chunkin
 - **Selected, with the plan's secondary measures breaking the tie: unmerged sections.** It is highest in strict mode (186) and ranks the right answer first most often (202). Its gain over current chunking, +2 / −0, is again within noise.
 
 The configuration taken to TEST-5 is therefore **pypdf in layout mode, with Physicochemical and Ionization status as their own sections**. On the dev pool it has 255 fully answered, against 251 for the current system.
+
+## 4. Confirmation on TEST-5
+
+TEST-5 is 100 fresh questions plus 4 unanswerable ones. It was frozen with the plan before any route ran, and run once ([results/routes_test5.md](results/routes_test5.md)).
+
+| configuration | fully answered, transparent | fully answered, strict |
+|---|---:|---:|
+| **current**: pdfplumber 1.5, current chunking | **88/100** | 61/100 |
+| selected: pypdf layout mode, unmerged sections | 87/100 (+0 / −1, p = 1.0) | 61/100 (+1 / −1) |
+
+- **The selected configuration is not better.** Its +4 on the known questions was noise, so by the plan the app does not change.
+- **No other candidate beats the current system in transparent mode.** The best ties at 88. These runs are exploratory, and the pattern of the known questions repeats:
+  - extractors that keep reading order: 87–88;
+  - docling: 83; drawing-order extractors: 76–77; OCR: 72;
+  - routes that ignore the structure: 77–82;
+  - item fragments and French section sizes: 88; sentences: 87.
+- **In strict mode,** item fragments reach 63 (+2 / −0) and a few extractors 62 (+1). All within noise.

@@ -344,32 +344,45 @@ def _fr_heading(line):
     return any(s.startswith(k) and len(s) <= len(k) + 12 for k in map(pipelines.squash, pipelines._FR_HEADERS))
 
 
-def doc_spans(path, max_lines=60):
+def doc_spans(path):
     """Every run of consecutive lines of the document, as a fragment with the
     product header, also preceded by its section heading when it starts
     inside a section; French runs also in English (line by line translation).
-    [(doc, text, original text)]"""
+
+    The model reads at most 256 word pieces, so all runs from the same first
+    line that exceed it have the same vector: they are represented once, by
+    the first such run (embedded) and the longest one (checked for the answer).
+    [(doc, text embedded, text checked, original text checked)]"""
     doc = inrules.doc_key(path.name)
     header, lang, lines = _units(path)
     heading = _fr_heading if lang == 'fr' else (lambda l: pipelines._match_header(l)[0] is not None)
     versions = [(header, lines, lines)]
     if lang == 'fr':
         versions.append(('Ascorbic Acid (E300)', inrules.translate(lines, 'fr-en'), lines))
+    tok = inrules.MODEL.tokenizer
+    limit = inrules.MODEL.max_seq_length - 2
     out = []
     for head, shown, orig in versions:
-        last = None
-        heads = []
+        size = [len(tok.tokenize(l)) for l in shown]
+        last, heads = None, []
         for i, l in enumerate(orig):
             if heading(l):
                 last = i
             heads.append(last)
         for i in range(len(shown)):
-            for j in range(i + 1, min(len(shown), i + max_lines) + 1):
-                body, body_o = ' '.join(shown[i:j]), ' '.join(orig[i:j])
-                out.append((doc, f'{head} - {body}', f'{header} - {body_o}'))
-                h = heads[i]
-                if h is not None and h < i:
-                    out.append((doc, f'{head} - {shown[h]}: {body}', f'{header} - {orig[h]}: {body_o}'))
+            prefixes = [(head, None)] + ([(head, heads[i])] if heads[i] is not None and heads[i] < i else [])
+            for hd, h in prefixes:
+                lead = len(tok.tokenize(hd)) + (size[h] + 1 if h is not None else 0) + 1
+                label, label_o = (f'{shown[h]}: ', f'{orig[h]}: ') if h is not None else ('', '')
+                total = lead
+                for j in range(i + 1, len(shown) + 1):
+                    total += size[j - 1]
+                    text = f'{hd} - {label}{" ".join(shown[i:j])}'
+                    if total > limit:          # this run and every longer one: same vector
+                        out.append((doc, text, f'{hd} - {label}{" ".join(shown[i:])}',
+                                    f'{header} - {label_o}{" ".join(orig[i:])}'))
+                        break
+                    out.append((doc, text, text, f'{header} - {label_o}{" ".join(orig[i:j])}'))
     return out
 
 
@@ -379,10 +392,10 @@ def span_oracle(frags, questions, modes=('S', 'S+F')):
     it would need (the 3rd result shown). Returns {mode: [(id, need, best, span)]}."""
     index = inrules.Index(frags)
     spans = [s for p in sorted(inrules.PDF_DIR.glob('*.pdf')) for s in doc_spans(p)]
-    mat = inrules.embed_all([t for _, t, _ in spans])
+    mat = inrules.embed_all([s[1] for s in spans])
     by_doc = {}
-    for k, (doc, _, _) in enumerate(spans):
-        by_doc.setdefault(doc, []).append(k)
+    for k, s in enumerate(spans):
+        by_doc.setdefault(s[0], []).append(k)
     out = {}
     for mode in modes:
         rows = []
@@ -397,42 +410,52 @@ def span_oracle(frags, questions, modes=('S', 'S+F')):
             variants = inrules.question_variants(q['q'], inrules.MODES[mode].get('translate_q', False))
             qv = inrules.embed_all(variants)
             cand = [k for d in t['docs'] for k in by_doc.get(d, [])
-                    if inrules.relevant(t, d, spans[k][1]) or inrules.relevant(t, d, spans[k][2])]
+                    if inrules.relevant(t, d, spans[k][2]) or inrules.relevant(t, d, spans[k][3])]
             if not cand:
                 rows.append((q['id'], need, None, None))
                 continue
             scores = (mat[cand] @ qv.T).max(axis=1)
             best = int(np.argmax(scores))
-            rows.append((q['id'], need, float(scores[best]), spans[cand[best]][1]))
+            rows.append((q['id'], need, float(scores[best]), spans[cand[best]][2]))
         out[mode] = rows
     return out
 
 
-def oracle_study(extractors, questions=DEV_POOL, name='dev pool', stem='routes_oracle'):
-    lines = [f'# Span oracle ({name})', '',
-             'For every single-answer question the current chunking misses: could ANY run of consecutive lines of '
-             'the right document, with the product header (and optionally its section heading), enter the top 3, '
-             'the rest of the index unchanged? "Fixable" = the best such fragment scores above the 3rd result.', '',
-             '| extractor | mode | misses | fixable by some fragment | not fixable by any fragment |',
-             '|---|---|---:|---:|---:|']
-    detail, fixable_ids = [], {}
+def oracle_study(extractors, sets=(('the known questions', DEV_POOL, 'routes_oracle'),
+                                   ('TEST-5', TEST5, 'routes_oracle_test5'))):
+    """The span oracle for each extractor (current chunking) on each question
+    set; a fragment's vector is computed once and reused across sets."""
+    reports = {stem: ([], [], {}) for _, _, stem in sets}         # table rows, details, fixable ids
     for ex in extractors:
         use_extractor(None if ex == 'pdfplumber-1.5' else ex)
-        res = span_oracle(inrules.build(**inrules.FINAL_CORPUS_V2), questions)
-        for mode, rows in res.items():
-            fix = [r for r in rows if r[2] is not None and r[2] > r[1]]
-            fixable_ids.setdefault(mode, {})[ex] = {r[0] for r in fix}
-            lines.append(f'| {ex} | {mode} | {len(rows)} | {len(fix)} | {len(rows) - len(fix)} |')
-            detail += [f'- {ex} {mode} **{r[0]}**: needs {r[1]:.3f}, best span '
-                       + (f'{r[2]:.3f} ({"fixable" if r[2] > r[1] else "not fixable"}): `{r[3][:160]}`' if r[2] is not None
-                          else 'none contains the answer') for r in rows]
-        print(ex, {m: (len(r), sum(1 for x in r if x[2] is not None and x[2] > x[1])) for m, r in res.items()}, flush=True)
+        frags = inrules.build(**inrules.FINAL_CORPUS_V2)
+        for name, questions, stem in sets:
+            rows_out, detail, fixable_ids = reports[stem]
+            res = span_oracle(frags, questions)
+            for mode, rows in res.items():
+                fix = [r for r in rows if r[2] is not None and r[2] > r[1]]
+                fixable_ids.setdefault(mode, {})[ex] = {r[0] for r in fix}
+                rows_out.append(f'| {ex} | {mode} | {len(rows)} | {len(fix)} | {len(rows) - len(fix)} |')
+                detail += [f'- {ex} {mode} **{r[0]}**: needs {r[1]:.3f}, best span '
+                           + (f'{r[2]:.3f} ({"fixable" if r[2] > r[1] else "not fixable"}): `{r[3][:160]}`'
+                              if r[2] is not None else 'none contains the answer') for r in rows]
+            print(ex, name, {m: (len(r), sum(1 for x in r if x[2] is not None and x[2] > x[1]))
+                             for m, r in res.items()}, flush=True)
     use_extractor(None)
-    lines += ['', 'Across extractors (the best extractor for each question): '
-              + ', '.join(f'{m}: {len(set().union(*v.values()))} fixable' for m, v in fixable_ids.items()), '',
-              '## Every miss', ''] + detail
-    (RESULTS / f'{stem}.md').write_text('\n'.join(lines) + '\n')
-    print('\n'.join(lines[:12 + 2 * len(extractors)]))
+    for name, _, stem in sets:
+        rows_out, detail, fixable_ids = reports[stem]
+        lines = [f'# Span oracle ({name})', '',
+                 'For every single-answer question the current chunking misses: could ANY run of consecutive lines '
+                 'of the right document, with the product header (and optionally its section heading), enter the '
+                 'top 3, the rest of the index unchanged? "Fixable" = the best such fragment scores above the 3rd '
+                 'result shown.', '',
+                 '| extractor | mode | misses | fixable by some fragment | not fixable by any fragment |',
+                 '|---|---|---:|---:|---:|'] + rows_out
+        lines += ['', 'Across extractors (the best extractor for each question): '
+                  + ', '.join(f'{m}: {len(set().union(*v.values()))} fixable' for m, v in fixable_ids.items()),
+                  '', '## Every miss', ''] + detail
+        (RESULTS / f'{stem}.md').write_text('\n'.join(lines) + '\n')
+        print('\n'.join(lines[:8 + len(rows_out) + 2]))
 
 
 ROUTES = ['current', 'items-spec', 'items-all', 'unmerge', 'sentences', 'windows-3', 'windows-6',
