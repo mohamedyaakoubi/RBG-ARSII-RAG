@@ -103,4 +103,4 @@ For each result the app shows the fragment, its score, the source PDF, the formu
 
 ![Transparent mode on the challenge's example question](results/ui_example.png)
 
-Reproduce the measurements with `python -m audit.evaluate_heldout --set test3` (and `--set test2`). The original pipeline is kept verbatim in [`legacy/`](legacy/), writing to its own `legacy_embeddings` table, so the audit stays reproducible.
+Reproduce the measurements with `python -m audit.evaluate_heldout --set test3` (and `--set test2`). [ERROR_ANALYSIS.md](ERROR_ANALYSIS.md) checks these results by hand and explains every remaining error. The original pipeline is kept verbatim in [`legacy/`](legacy/), writing to its own `legacy_embeddings` table, so the audit stays reproducible.
