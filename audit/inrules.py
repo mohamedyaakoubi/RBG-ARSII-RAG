@@ -52,7 +52,7 @@ MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 # section ids it contains, to collapse duplicates at search time.
 
 def frag(doc, header, parts, lang, key, covers, orig=None):
-    text = f'{header} - ' + ' '.join(f'{label}: {content}' for label, content in parts)
+    text = f'{header} - ' + ' '.join(f'{label}: {content}' if label else content for label, content in parts)
     return {'doc': doc, 'header': header, 'parts': parts, 'text': text, 'lang': lang,
             'key': key, 'covers': frozenset(covers), 'orig': orig or text}
 
@@ -106,12 +106,18 @@ def desplit(text):
     return ' '.join(out)
 
 
-def tds_fragments(path, card=False, docinfo=False, fix_splits=False, usage=False):
+def tds_fragments(path, card=False, docinfo=False, fix_splits=False, usage=False, identity=False):
     """Section fragments, plus optionally:
-    card    - page 1 of the sheet as one fragment (identity, use, dosage...);
-    usage   - Application + Dosage together (how the product is used, how much);
-    docinfo - the letterhead (issuer, addresses) and the update date, headed by
-              the product code only so it does not match enzyme questions."""
+    card     - page 1 of the sheet as one fragment (identity, use, dosage...);
+    usage    - Application + Dosage together (how the product is used, how much);
+    identity - Product Description merged into Effective material (on its own,
+               "Enzyme preparation based on X" repeats the header and matches
+               any question about X);
+    docinfo  - the letterhead (issuer, addresses) and the update date:
+               'product' = own fragment headed by the product code,
+               'plain'   = letterhead fragment without product header, update
+                           date kept with the Storage block it closes,
+               'card'    = letterhead inside the page-1 card, update date with Storage."""
     pages = extract_pages(path, x_tolerance=1.5)
     sec = tds_sections(pages)
     if fix_splits:
@@ -119,20 +125,39 @@ def tds_fragments(path, card=False, docinfo=False, fix_splits=False, usage=False
     doc = doc_key(path.name)
     enzyme = enzyme_name(sec.get('Product Description', '') + ' ' + sec.get('Effective material', ''))
     header = f'{product_name(path)} ({enzyme})'
-    out = [frag(doc, header, [(h, b)], 'en', (doc, h), {h}) for h, b in sec.items()]
+    text = normalize('\n'.join(pages))
+    letterhead = ' '.join(l.strip() for l in text.split('\n')[:12]
+                          if _BOILERPLATE.match(l.strip()) and not re.match(r'(TECHNICAL|FOOD|Bakery)', l.strip(), re.I))
+    last = re.search(r'Last updat\w*\s*:?\s*[\d/]+', text)
+    if docinfo in ('plain', 'card') and last and 'Storage' in sec:
+        sec['Storage'] = f"{sec['Storage']} {last.group(0)}"
+    sections = list(sec.items())
+    if identity and 'Product Description' in sec and 'Effective material' in sec:
+        sections = [(h, b) for h, b in sections if h != 'Product Description']
+    out = []
+    for h, b in sections:
+        if identity and h == 'Effective material' and 'Product Description' in sec:
+            parts = [('Product Description', sec['Product Description']), (h, b)]
+            out.append(frag(doc, header, parts, 'en', (doc, 'identity'), {'Product Description', h}))
+        else:
+            out.append(frag(doc, header, [(h, b)], 'en', (doc, h), {h}))
     if card:
         parts = [(h, sec[h]) for h in PAGE1 if h in sec]
+        if docinfo == 'card':
+            parts = [('TECHNICAL DATA SHEET', letterhead)] + parts
         out.append(frag(doc, header, parts, 'en', (doc, 'card'), {h for h, _ in parts}))
-    if usage and 'Dosage' in sec:
-        parts = [(h, sec[h]) for h in ('Application', 'Dosage') if h in sec]
-        out.append(frag(doc, header, parts, 'en', (doc, 'usage'), {h for h, _ in parts}))
-    if docinfo:
-        text = normalize('\n'.join(pages))
-        lines = [l.strip() for l in text.split('\n')[:12]
-                 if _BOILERPLATE.match(l.strip()) and not re.match(r'(TECHNICAL|FOOD|Bakery)', l.strip(), re.I)]
-        last = re.search(r'Last updat\w*\s*:?\s*[\d/]+', text)
-        info = ' '.join(lines) + (f' {last.group(0)}' if last else '')
+    groups = {True: [('Application', 'Dosage')], 'AD': [('Application', 'Dosage')],
+              'AFD': [('Application', 'Function', 'Dosage')],
+              'AD+FD': [('Application', 'Dosage'), ('Function', 'Dosage')]}.get(usage, [])
+    for group in groups if 'Dosage' in sec else []:
+        parts = [(h, sec[h]) for h in group if h in sec]
+        out.append(frag(doc, header, parts, 'en', (doc, 'usage', group), {h for h, _ in parts}))
+    if docinfo in (True, 'product'):
+        info = letterhead + (f' {last.group(0)}' if last else '')
         out.append(frag(doc, product_name(path), [('Document', info)], 'en', (doc, 'Document'), {'Document'}))
+    elif docinfo == 'plain':
+        out.append(frag(doc, 'TECHNICAL DATA SHEET', [(None, letterhead)], 'en',
+                        ('letterhead', letterhead), {'letterhead'}))
     return out
 
 
@@ -285,7 +310,8 @@ def translated(frags, rejected=None):
     return out
 
 
-def build(card=False, docinfo=False, fix_splits=False, rows=True, usage=False, bilingual=False, rejected=None):
+def build(card=False, docinfo=False, fix_splits=False, rows=True, usage=False, identity=False,
+          bilingual=False, rejected=None):
     """bilingual: False; True = translate every fragment into the other
     language; 'fr-en' = only the French document is also indexed in English
     (the embedding model's language)."""
@@ -294,7 +320,8 @@ def build(card=False, docinfo=False, fix_splits=False, rows=True, usage=False, b
         if doc_key(p.name) == 'aa':
             frags += aa_fragments(p, rows=rows)
         else:
-            frags += tds_fragments(p, card=card, docinfo=docinfo, fix_splits=fix_splits, usage=usage)
+            frags += tds_fragments(p, card=card, docinfo=docinfo, fix_splits=fix_splits, usage=usage,
+                                   identity=identity)
     if bilingual:
         source = [f for f in frags if bilingual is True or f['lang'] == 'fr']
         frags += translated(source, rejected)
@@ -324,14 +351,15 @@ class Index:
         formulations of it); skip a fragment whose content is already shown."""
         qv = embed_all(list(queries))
         scores = (self.mat @ qv.T).max(axis=1)
-        picked, shown = [], {}
+        picked, shown, keys = [], {}, set()
         for i in np.argsort(-scores):
             f = self.frags[i]
             if dedupe:
                 seen = shown.get(f['doc'], set())
-                if f['covers'] <= seen:
+                if f['covers'] <= seen or f['key'] in keys:
                     continue
                 shown[f['doc']] = seen | f['covers']
+                keys.add(f['key'])
             picked.append((f, float(scores[i])))
             if len(picked) == k:
                 break
@@ -393,11 +421,19 @@ def split_by_entity(q):
     return subs
 
 
-def answer(index, q, translate_q=False, decompose=False, k=TOP_K):
-    """Top-k fragments for question q: [(fragment, score, formulations used)]."""
+def answer(index, q, translate_q=False, decompose=False, focus=False, k=TOP_K):
+    """Top-k fragments for question q: [(fragment, score, formulations used)].
+    focus: a question naming exactly one product family is answered from
+    fragments about that family (same rule as for each sub-question)."""
     subs = split_by_entity(q) if decompose else [q]
     if len(subs) == 1:
         variants = question_variants(q, translate_q)
+        named = [p for _, p in ENTITIES if re.search(p, q, re.I)]
+        if focus and len(named) == 1:
+            hits = index.search(variants, 30)
+            about = [(f, s) for f, s in hits if re.search(named[0], f['header'], re.I)]
+            if about:
+                return [(f, s, variants) for f, s in about[:k]]
         return [(f, s, variants) for f, s in index.search(variants, k)]
     picked, keys = [], set()
     patterns = dict(ENTITIES)
@@ -425,6 +461,11 @@ def answer(index, q, translate_q=False, decompose=False, k=TOP_K):
 # ── Configuration chosen on the development pool (frozen before TEST-2) ────
 
 FINAL_CORPUS = dict(card=True, usage=True, rows='both', docinfo=True, fix_splits=True, bilingual='fr-en')
+
+# v2: post-hoc fixes suggested by TEST-2 failures, chosen on DEV + TEST + TEST-2
+# and measured once on TEST-3 (frozen before these changes).
+FINAL_CORPUS_V2 = dict(FINAL_CORPUS, identity=True, docinfo='plain', usage='AD+FD')
+
 MODES = {
     'S': {},                                              # question embedded as typed
     'S+': dict(translate_q=True, decompose=True),         # + EN translation, one sub-question per product
