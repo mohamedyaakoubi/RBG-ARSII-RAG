@@ -64,7 +64,8 @@ with st.sidebar:
     mode = MODES[st.radio("Mode de recherche", list(MODES), index=default)]
     st.caption(
         "Transparent : une question en français est aussi encodée en anglais (langue du modèle), "
-        "et une question sur plusieurs produits est découpée par produit. "
+        "une question sur plusieurs produits est découpée par produit, et une question qui nomme "
+        "un produit par son code (ex. « L MAX64 ») est répondue depuis la fiche de ce produit. "
         "La formulation utilisée est affichée sous chaque résultat.\n\n"
         "Strict : la question est encodée exactement telle que saisie."
     )
@@ -133,6 +134,8 @@ if search_btn or (example_pick and not query.strip()):
             st.info("Aucun résultat trouvé.")
         else:
             st.markdown(f"### Résultats pour : *{html.escape(active_query)}*")
+            if results[0]["restriction"]:
+                st.info(results[0]["restriction"])
             st.markdown("---")
 
             for res in results:

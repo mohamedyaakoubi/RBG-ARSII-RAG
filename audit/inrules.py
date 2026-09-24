@@ -34,7 +34,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from audit.eval_set import doc_key, relevant
-from audit.pipelines import (_BOILERPLATE, _FR_TABLE_SECTIONS, _fr_table_rows, enzyme_name,
+from audit.pipelines import (_BOILERPLATE, _ENZYMES, _FR_TABLE_SECTIONS, _fr_table_rows, enzyme_name,
                              extract_pages, faithful_fr_chunks, normalize, product_name,
                              tds_sections)
 
@@ -341,19 +341,37 @@ def embed_all(texts):
     return np.stack([_EMB[t] for t in texts])
 
 
+# Header of a technical data sheet's fragments: "BVZyme L MAX64 (lipase)".
+_SHEET = re.compile(r'(BVZyme .+) \((?:%s|enzyme)\)' % '|'.join(re.escape(n) for _, n in _ENZYMES))
+
+
+def code_pattern(product):
+    """'BVZyme L MAX64' -> regex for its code however it is cased, spaced or
+    hyphenated ('L MAX64', 'lmax64', 'L-MAX 64'), not glued to other letters
+    or digits ('AF110' does not match 'AF1100')."""
+    code = re.sub(r'^BVZyme\s+', '', product, flags=re.I).replace(' ', '')
+    return (r'(?:(?<![A-Za-z0-9])|(?<=bvzyme))' + r'[\s_‐‑–-]*'.join(map(re.escape, code))
+            + r'(?![A-Za-z0-9])')
+
+
 class Index:
     def __init__(self, frags):
         self.frags = frags
         self.mat = embed_all([f['text'] for f in frags])
+        self.sheets = {f['doc']: f['header'] for f in frags if _SHEET.fullmatch(f['header'])}
+        self.codes = {d: code_pattern(_SHEET.fullmatch(h).group(1)) for d, h in self.sheets.items()}
 
-    def search(self, queries, k=TOP_K, dedupe=True):
+    def search(self, queries, k=TOP_K, dedupe=True, allow=None):
         """Rank fragments by cosine with the question (max over the given
-        formulations of it); skip a fragment whose content is already shown."""
+        formulations of it); skip a fragment whose content is already shown.
+        allow: only fragments for which allow(fragment) is true."""
         qv = embed_all(list(queries))
         scores = (self.mat @ qv.T).max(axis=1)
         picked, shown, keys = [], {}, set()
         for i in np.argsort(-scores):
             f = self.frags[i]
+            if allow is not None and not allow(f):
+                continue
             if dedupe:
                 seen = shown.get(f['doc'], set())
                 if f['covers'] <= seen or f['key'] in keys:
@@ -402,10 +420,9 @@ ENTITIES = [
 _GLUE = r"(?:\s|,|;|/|&|\+|\bet\b|\band\b|\bou\b|\bor\b|\bde\b|\bd['’]|\bdu\b|\bdes\b|\bla\b|\ble\b|\bl['’]|\bles\b|\bof\b|\bthe\b)*"
 
 
-def split_by_entity(q):
-    """One sub-question per product family named in the question, keeping the
+def split_spans(q, spans):
+    """One sub-question per named span [(name, match)] in order, keeping the
     user's own wording (a coordinated list is reduced to one of its members)."""
-    spans = sorted([(n, m) for n, p in ENTITIES for m in [re.search(p, q, re.I)] if m], key=lambda x: x[1].start())
     if len(spans) < 2:
         return [q]
     subs = []
@@ -421,10 +438,67 @@ def split_by_entity(q):
     return subs
 
 
-def answer(index, q, translate_q=False, decompose=False, focus=False, k=TOP_K):
+def split_by_entity(q):
+    """One sub-question per product family named in the question."""
+    return split_spans(q, sorted([(n, m) for n, p in ENTITIES for m in [re.search(p, q, re.I)] if m],
+                                 key=lambda x: x[1].start()))
+
+
+def named_products(index, q):
+    """Products the question names by their code: [(doc, match)], in order."""
+    found = [(d, m) for d, pat in index.codes.items() for m in [re.search(pat, q, re.I)] if m]
+    return sorted(found, key=lambda x: x[1].start())
+
+
+def answer_products(index, q, products, translate_q, k=TOP_K):
+    """Product filter, for a question naming products by their code.
+    One product, and no other product family (its own may be named): the k
+    best fragments of its sheet. Otherwise one sub-question per product and per
+    other family named, a product's answered from its sheet, a family's from
+    fragments about it; the remaining slots are filled from all of these.
+    Ranking is by cosine throughout, and content already shown is skipped."""
+    patterns = dict(ENTITIES)
+    docs = [d for d, _ in products]
+    own = {n for n, p in ENTITIES for d in docs if re.search(p, index.sheets[d], re.I)}
+    families = [(n, m) for n, p in ENTITIES if n not in own for m in [re.search(p, q, re.I)] if m]
+    about = {d: (lambda f, d=d: f['doc'] == d) for d in docs}
+    about.update({n: (lambda f, p=patterns[n]: re.search(p, f['header'], re.I) is not None) for n, _ in families})
+    spans = sorted(products + families, key=lambda x: x[1].start())
+    if len(spans) == 1:
+        variants = question_variants(q, translate_q)
+        return [(f, s, variants) for f, s in index.search(variants, k, allow=about[docs[0]])]
+    picked, keys, shown = [], set(), {}
+
+    def take(f, s, variants):
+        if f['key'] in keys or f['covers'] <= shown.get(f['doc'], set()):
+            return False
+        picked.append((f, s, variants))
+        keys.add(f['key'])
+        shown[f['doc']] = shown.get(f['doc'], set()) | f['covers']
+        return True
+
+    for (name, _), sq in zip(spans, split_spans(q, spans)):
+        variants = question_variants(sq, translate_q)
+        for f, s in index.search(variants, 10, allow=about[name]):
+            if take(f, s, variants):
+                break
+    variants = question_variants(q, translate_q)          # fill with the whole question
+    for f, s in index.search(variants, 3 * k, allow=lambda f: any(a(f) for a in about.values())):
+        if len(picked) >= k:
+            break
+        take(f, s, variants)
+    return sorted(picked[:k], key=lambda x: -x[1])
+
+
+def answer(index, q, translate_q=False, decompose=False, focus=False, product_filter=False, k=TOP_K):
     """Top-k fragments for question q: [(fragment, score, formulations used)].
     focus: a question naming exactly one product family is answered from
-    fragments about that family (same rule as for each sub-question)."""
+    fragments about that family (same rule as for each sub-question).
+    product_filter: a question naming products by their code is answered from
+    their sheets (answer_products); other questions are not affected."""
+    products = named_products(index, q) if product_filter else []
+    if products:
+        return answer_products(index, q, products, translate_q, k)
     subs = split_by_entity(q) if decompose else [q]
     if len(subs) == 1:
         variants = question_variants(q, translate_q)
@@ -469,6 +543,8 @@ FINAL_CORPUS_V2 = dict(FINAL_CORPUS, identity=True, docinfo='plain', usage='AD+F
 MODES = {
     'S': {},                                              # question embedded as typed
     'S+': dict(translate_q=True, decompose=True),         # + EN translation, one sub-question per product
+    # v3: + product-code filter, suggested by TEST-2/TEST-3 failures, measured once on TEST-4
+    'S+F': dict(translate_q=True, decompose=True, product_filter=True),
 }
 
 

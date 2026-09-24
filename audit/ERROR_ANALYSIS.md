@@ -1,6 +1,6 @@
 # Are the answers really correct, and are the errors really limits?
 
-This checks the results of [IMPROVEMENT.md](IMPROVEMENT.md) by hand and asks, for every remaining error, whether anything inside the challenge's rules could fix it. The last section turns this into a checklist for knowing when to stop.
+This checks the results of [IMPROVEMENT.md](IMPROVEMENT.md) by hand and asks, for every remaining error, whether anything inside the challenge's rules could fix it. Section 3 turns this into a checklist for knowing when to stop. Section 4 applies it to the one fix that was left.
 
 ## 1. Hand check of the automatic scoring
 
@@ -30,7 +30,7 @@ The oracle test is a diagnostic, not a fix. I wrote those phrasings knowing wher
 
 | cause | errors | evidence | fixable inside the rules? |
 |---|---:|---|---|
-| product code misread (e.g. "L MAX64" read as "TG MAX64") | 4 | V18, V32, Z01, Z14. Z14 fails even when rephrased in the documents' words (rank 6): the code itself is misread. | **Yes.** A product-code filter answers from the named product's sheet, with cosine ranking inside it. It fixes all 4 and breaks none of the 22 questions naming a product. **Not implemented yet.** |
+| product code misread (e.g. "L MAX64" read as "TG MAX64") | 4 | V18, V32, Z01, Z14. Z14 fails even when rephrased in the documents' words (rank 6): the code itself is misread. | **Yes.** A product-code filter answers from the named product's sheet, with cosine ranking inside it. It fixes all 4 and breaks none of the 22 questions naming a product. **Now implemented and measured on fresh questions (section 4).** |
 | lost at the top-3 cut among near-identical sheets | 5 | V05, V34, V54, V63, V70: correct fragment at rank 4–5, within 0.008 of the third | No. `Top K = 3` is imposed, and 34 near-identical sheets make the order of the top results nearly random. |
 | user wording ≠ document wording | 5 | V11 "per tonne of flour", V37 "conditionnement" (translated as "conditioning"), V39 "ASR (anaérobies…)", V62 "densité", Z29 "packed". Rephrased in the documents' words, 4 rank 1st and density 3rd. So the answers are in the index, but the model doesn't connect the user's words to them. | **Not that I found.** A user can't be asked to guess the documents' vocabulary, so a fix has to be automatic. With the imposed model, the only fixes I found are hand-written synonym rules or text added to the corpus. Those only cover words already seen failing, and it is what the previous version did. V37 is also a translation error; another translation model might avoid it (untested, one question). |
 | the PDF only implies the answer | 2 | V44, Z34 "who manufactures BVZyme?". The letterhead names VTR&beyond but never says "manufacturer". | Only by writing a "manufacturer" label the PDF doesn't contain. |
@@ -39,7 +39,7 @@ The oracle test is a diagnostic, not a fix. I wrote those phrasings knowing wher
 
 So, of the 16 errors in transparent mode:
 - **12 are limits** of the challenge's setup: the imposed model, the imposed top-3, and what the PDFs say. "Limit" doesn't mean acceptable: each is still a wrong answer for the user. It only means I found no honest, general change inside the rules that fixes it.
-- **4 are unfinished work.** One general rule I hadn't found.
+- **4 were unfinished work.** One general rule I hadn't found, now implemented (section 4).
 
 ## 3. How to know when to stop
 
@@ -55,4 +55,28 @@ So, of the 16 errors in transparent mode:
 6. **Know your noise floor.** With N test questions, a difference smaller than about 2×√(p(1−p)/N) can't be told from luck. That is ±0.08–0.12 here. Fixes worth 1–2 questions can't be proven without a bigger test set.
 7. **Watch the honesty line.** Once the remaining fixes require writing text the documents don't contain, or rules tuned to known questions, you have reached the point where the previous version went wrong.
 
-**Stop when every remaining error is explained and falls under 5 (a constraint) or 7 (only fixable dishonestly), and the general fixes from step 4 are done or too small to measure.** Here, one general fix (the product-code filter) is still open. After it, the remaining errors are limits. They are still wrong answers users will get, so the write-up has to say so.
+**Stop when every remaining error is explained and falls under 5 (a constraint) or 7 (only fixable dishonestly), and the general fixes from step 4 are done or too small to measure.** Here, the one general fix left (the product-code filter) is now done and measured on fresh questions (section 4). The remaining errors are limits. They are still wrong answers users will get, so the write-up has to say so.
+
+## 4. The product-code filter, measured on fresh questions
+
+The filter came from the errors above, so TEST-2 and TEST-3 can't measure it. On them it fixes the 4 errors it was designed from, which proves nothing. So I wrote TEST-4 first: 77 questions that all name a product. The product, the attribute, the language, and even the spelling of the code ("L MAX64", "lmax64", "L-MAX 64") were drawn at random. The set was committed before the filter existed and run once ([results/test4.md](results/test4.md)).
+
+| transparent mode on TEST-4 | without the filter | with the filter |
+|---|---:|---:|
+| single-product questions: right answer in the top 3 | 53/60 | 56/60 (3 fixed, 0 broken; p = 0.25) |
+| questions naming two products, or a product and another family: all of them covered | 5/14 | 12/14 (8 gained, 1 lost; p = 0.039) |
+
+- The code was recognized in all 74 answerable questions, however it was written.
+- The single-product gain is too small to prove with 60 questions (step 6). The gain on questions naming several things is clear.
+- I read every question whose verdict changed, and every remaining error. The automatic judgment matched my reading on each.
+
+Errors left in transparent mode on TEST-4:
+
+| question | what the user sees | cause |
+|---|---|---|
+| P12 "limite en plomb … LMAXX", P30 "maximum moisture content of AF330" | three fragments from the right sheet, but not its Heavy metals or Organoleptic section | user wording ≠ document wording |
+| P41 "Qui fabrique le BVZyme AF110 ?", P55 "Quelle entreprise produit la lipase BVZyme L-55 ?" | the right sheet, without its letterhead | the PDF only implies the answer |
+| P67 "Dosage du HCF-MAX-X et du TG 883 ?" (half answered) | TG883's dosage, but HCF MAX X's activity instead of its dosage | the question is translated as "Determination of …" |
+| P70 "rôle du HCB710 et de l'acide ascorbique" (half answered) | HCB710's function, but an unrelated ascorbic-acid passage ("Points de Contrôle") | the ascorbic-acid sub-question ranks the wrong passage first. This is the filter's one regression: without it, the whole question found the right passage. |
+
+Each of these falls under a cause already listed: the imposed model's reading, what the PDFs say, or machine translation. By the checklist, this is where to stop. The translation error is the one candidate left for a general fix, a food-vocabulary glossary for translating questions. It would need a new test set of its own (step 4), and of all the errors so far it explains only this one.

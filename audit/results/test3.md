@@ -2,6 +2,7 @@
 
 v1 corpus: 608 fragments {'card': True, 'usage': True, 'rows': 'both', 'docinfo': True, 'fix_splits': True, 'bilingual': 'fr-en'} (chosen on DEV + TEST).
 v2 corpus: 609 fragments {'card': True, 'usage': 'AD+FD', 'rows': 'both', 'docinfo': 'plain', 'fix_splits': True, 'bilingual': 'fr-en', 'identity': True} (post-hoc, chosen on DEV + TEST + TEST-2).
+S+F = S+ with the product-code filter (suggested by TEST-2 and TEST-3 failures, so only TEST-4 measures it).
 TEST-3 was frozen at commit b6e31ab, before the configuration it tests was chosen.
 
 | system | right answer in top 3 (Hit@3) | 95% CI | Hit@1 | MRR@3 | Hit@3 FR | Hit@3 EN | multi-product coverage | all products covered | mean top-1 score: answerable / unanswerable |
@@ -12,6 +13,7 @@ TEST-3 was frozen at commit b6e31ab, before the configuration it tests was chose
 | in-rules v1 S+ (transparent preprocessing) | 46/52 = **0.885** | [0.79, 0.96] | 0.769 | 0.827 | 0.939 | 0.789 | 0.786 | 0.57 | 0.667 / 0.578 |
 | in-rules v2 S (strict) | 42/52 = **0.808** | [0.69, 0.90] | 0.673 | 0.731 | 0.788 | 0.842 | 0.500 | 0.29 | 0.604 / 0.531 |
 | in-rules v2 S+ (transparent preprocessing) | 48/52 = **0.923** | [0.85, 0.98] | 0.846 | 0.885 | 0.970 | 0.842 | 0.857 | 0.71 | 0.667 / 0.575 |
+| in-rules v2 S+F (transparent + product filter) | 50/52 = **0.962** | [0.90, 1.00] | 0.885 | 0.920 | 0.970 | 0.947 | 0.857 | 0.71 | 0.666 / 0.555 |
 
 ## Paired tests (TEST-3, single-answer questions, Hit@3)
 
@@ -24,3 +26,5 @@ TEST-3 was frozen at commit b6e31ab, before the configuration it tests was chose
 | in-rules v2 S (strict) vs old_as_submitted | 12 | 3 | 0.0352 |
 | in-rules v2 S+ (transparent preprocessing) vs in-rules v2 S (strict) | 6 | 0 | 0.0312 |
 | in-rules v2 S+ (transparent preprocessing) vs old_as_submitted | 16 | 1 | 0.0003 |
+| in-rules v2 S+F (transparent + product filter) vs in-rules v2 S+ (transparent preprocessing) | 2 | 0 | 0.5000 |
+| in-rules v2 S+F (transparent + product filter) vs old_as_submitted | 17 | 0 | 0.0000 |

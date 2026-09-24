@@ -56,10 +56,10 @@ question ──► all-MiniLM-L6-v2 ──► cosine similarity, ranked ◄─�
 
 | mode | the question is embedded… |
 |---|---|
-| `transparent` (default) | as typed and, if French, also in English (the better match is kept); a question naming several products is split into one sub-question per product, keeping the user's wording |
+| `transparent` (default) | as typed and, if French, also in English (the better match is kept); a question naming several products is split into one sub-question per product, keeping the user's wording; a question naming a product by its code (`L MAX64`, `lmax64`, `L-MAX 64`) is answered from that product's sheet |
 | `strict` | exactly as typed |
 
-Every result shows its score, the source PDF, and **the formulation of the question that produced the score**. The score is the true cosine similarity between that formulation and the fragment shown. It is not a probability of being correct.
+Every result shows its score, the source PDF, and **the formulation of the question that produced the score**. The score is the true cosine similarity between that formulation and the fragment shown. It is not a probability of being correct. When the search was restricted to the sheets a question names, a notice above the results says so.
 
 ---
 
@@ -71,13 +71,17 @@ Measured on held-out questions that were frozen in git before the configuration 
 |---|---:|---:|---:|---:|
 | previous version of this project | 33/52 = 63% | 52% | 61% | 43% |
 | **strict mode** | **42/52 = 81%** | 67% | 79% | 50% |
-| **transparent mode** | **48/52 = 92%** | 85% | 97% | 86% |
+| **transparent mode** (before the product filter) | **48/52 = 92%** | 85% | 97% | 86% |
 
 The challenge's example question in transparent mode returns one dosage fragment per product: xylanase (BVZyme HCF MAX X), ascorbic acid (Pain de mie CBP: 75 ppm), and alpha-amylase (BVZyme AF220: 2-10 ppm).
 
+**Product filter.** Transparent mode later gained the product filter. It was measured on 77 fresh questions that all name a product (TEST-4), frozen before the filter was written:
+- **Single-product questions:** 53/60 → 56/60 right. It fixed 3 and broke none, but that is too few to rule out luck (p = 0.25).
+- **Questions naming two products, or a product and another family:** everything named was covered in 12 of 14 instead of 5 (8 gained, 1 lost; p = 0.039).
+
 Full method, per-component contributions and remaining limits are in [audit/IMPROVEMENT.md](audit/IMPROVEMENT.md). [audit/AUDIT.md](audit/AUDIT.md) is an audit of the previous version. Its benchmark scores were real outputs, but the shown scores came from rewritten queries matched against text written into the database, and its results table did not match the code's output.
 
-**Limits.** Scores cannot tell when the corpus has no answer: unanswerable questions score in the same range as answerable ones. For a question about a product family (e.g. "xylanase"), dosages differ between products, so read the product name. A retrieval-trained multilingual model would help most with French questions, but the challenge imposes `all-MiniLM-L6-v2`.
+**Limits.** Scores cannot tell when the corpus has no answer: unanswerable questions score in the same range as answerable ones. For a question about a product family (e.g. "xylanase"), dosages differ between products, so read the product name. The product filter needs the full code: a partial code ("MAX64" could be L, TG or HCF MAX64) or a typo is answered as before. A retrieval-trained multilingual model would help most with French questions, but the challenge imposes `all-MiniLM-L6-v2`.
 
 ---
 

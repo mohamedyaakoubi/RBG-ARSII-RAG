@@ -10,9 +10,10 @@ class Config:
     TOP_K = 3
     PDF_FOLDER = os.getenv("PDF_FOLDER")
     EMBEDDING_DIMENSION = 384
-    # "transparent": French questions are also embedded in English and questions
-    # naming several products are split per product (the formulation used is shown).
-    # "strict": the question is embedded exactly as typed.
+    # "transparent": French questions are also embedded in English, questions
+    # naming several products are split per product, and a question naming a
+    # product by its code is answered from its sheet (formulation and
+    # restriction are shown). "strict": the question is embedded exactly as typed.
     SEARCH_MODE = os.getenv("SEARCH_MODE", "transparent")
     # rows fetched from pgvector before duplicate contents are collapsed
     CANDIDATES = int(os.getenv("CANDIDATES", "60"))

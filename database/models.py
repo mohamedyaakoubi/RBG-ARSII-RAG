@@ -70,28 +70,49 @@ def insert_fragments(documents, fragments, vectors):
         close_db_connection(connection)
 
 
-def search_cosine_similarity(query_vector, top_k=config.TOP_K):
+def search_cosine_similarity(query_vector, top_k=config.TOP_K, documents=None):
     """Rows ranked by cosine similarity with query_vector (pgvector <=> is the
-    cosine distance, so similarity = 1 - distance)."""
+    cosine distance, so similarity = 1 - distance). documents: only rows of
+    these id_document values."""
     connection = connect_to_db()
     if not connection:
         return []
     try:
         cursor = connection.cursor()
-        cursor.execute("""
+        where = "WHERE e.id_document = ANY(%s)" if documents else ""
+        cursor.execute(f"""
             SELECT e.id, e.id_document, d.fichier, e.texte_fragment, e.texte_original,
                    e.langue, e.produit, e.cle, e.couvre,
                    1 - (e.vecteur <=> %s::vector) AS score
             FROM embeddings e JOIN documents d USING (id_document)
+            {where}
             ORDER BY e.vecteur <=> %s::vector
             LIMIT %s
-        """, (query_vector.tolist(), query_vector.tolist(), top_k))
+        """, (query_vector.tolist(), *([list(documents)] if documents else []), query_vector.tolist(), top_k))
         columns = [c.name for c in cursor.description]
         rows = [dict(zip(columns, r)) for r in cursor.fetchall()]
         cursor.close()
         return rows
     except Exception as e:
         logger.error(f"Erreur lors de la recherche de similarité: {e}")
+        return []
+    finally:
+        close_db_connection(connection)
+
+
+def document_headers():
+    """Distinct (id_document, produit) pairs of the stored fragments."""
+    connection = connect_to_db()
+    if not connection:
+        return []
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT DISTINCT id_document, produit FROM embeddings ORDER BY id_document, produit")
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows
+    except Exception as e:
+        logger.error(f"Erreur lors de la lecture des produits: {e}")
         return []
     finally:
         close_db_connection(connection)

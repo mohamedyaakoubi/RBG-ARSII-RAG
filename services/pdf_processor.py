@@ -130,6 +130,17 @@ def enzyme_name(text):
     return next((name for pat, name in _ENZYMES if re.search(pat, s)), 'enzyme')
 
 
+# header of a data sheet's fragments: f'{product_name(path)} ({enzyme_name(...)})'
+_SHEET_HEADER = re.compile(r'(BVZyme .+) \((?:%s|enzyme)\)' % '|'.join(re.escape(n) for _, n in _ENZYMES))
+
+
+def sheet_product(produit):
+    """'BVZyme L MAX64 (lipase)' -> 'BVZyme L MAX64' when produit is the header
+    of a technical data sheet's fragments, else None."""
+    m = _SHEET_HEADER.fullmatch(produit or '')
+    return m.group(1) if m else None
+
+
 def _header_of(line):
     s = squash(line)
     for h in _TDS_HEADERS:
