@@ -186,22 +186,22 @@ def sentences_of(text):
     pieces = [p.strip() for p in re.split(r'(?<=[.;])\s+(?=[A-Z0-9*(\-])|\s+\|\s+|\s+(?=- )', text) if p.strip()]
     out = []
     for p in pieces:
-        if out and len(out[-1].split()) < 3:
+        if out and len(re.findall(r'\w+', out[-1])) < 3:
             out[-1] = f'{out[-1]} {p}'
         else:
             out.append(p)
-    return out
+    return [re.sub(r'^(?:-\s+)+', '- ', p) for p in out]      # a run of bullet glyphs is one bullet
 
 
-def with_parts(frags, extra):
-    """Add fragments `extra` = {(doc, section): [(fragment text parts...)]}:
+def with_parts(frags, extra, tag=''):
+    """Add fragments `extra` = {(doc, section, header, language): [parts]}:
     each part becomes a fragment, and every fragment covering `section` now
     also covers its parts."""
     new, ids = [], {}
     for (doc, section, header, lang), parts in extra.items():
         if len(parts) < 2:
             continue
-        pid = [f'{section}#{i}' for i in range(len(parts))]
+        pid = [f'{section}#{tag}{i}' for i in range(len(parts))]
         ids[(doc, section)] = set(pid)
         for i, part in zip(pid, parts):
             new.append(inrules.frag(doc, header, [(section, part)], lang, (doc, i), {i}))
@@ -233,13 +233,40 @@ def route_sentences(frags):
         if f['doc'] == 'aa' and f['lang'] == 'fr' and len(f['parts']) == 1 and not f['key'][1].startswith('row'):
             label, content = f['parts'][0]
             extra[('aa', label, f['header'], 'fr')] = sentences_of(content)
-    frags, new = with_parts(frags, extra)
+    frags, new = with_parts(frags, extra, tag='s')
     return frags + new + inrules.translated([f for f in new if f['lang'] == 'fr'])
+
+
+ADDITIVE = ('items-spec', 'items-all', 'unmerge', 'sentences', 'fr-350', 'fr-1000')
+
+
+def build_combo(parts):
+    """Several additive routes at once ('combo:unmerge+items-spec')."""
+    base = dict(inrules.FINAL_CORPUS_V2)
+    merge, original = pipelines._MERGE, pipelines.faithful_fr_chunks
+    try:
+        if 'unmerge' in parts:
+            pipelines._MERGE = {}
+        size = next((int(p.split('-')[1]) for p in parts if p.startswith('fr-')), None)
+        if size:
+            pipelines.faithful_fr_chunks = lambda path, max_chars=size: original(path, max_chars=size)
+            inrules.faithful_fr_chunks = pipelines.faithful_fr_chunks
+        frags = inrules.build(**base)
+        if 'items-spec' in parts or 'items-all' in parts:
+            frags = route_items(frags, sections=None if 'items-all' in parts else SPEC)
+        if 'sentences' in parts:
+            frags = route_sentences(frags)
+        return frags
+    finally:
+        pipelines._MERGE = merge
+        pipelines.faithful_fr_chunks = inrules.faithful_fr_chunks = original
 
 
 def build_route(route):
     """Fragments of the corpus under a chunking route (current extractor)."""
     base = dict(inrules.FINAL_CORPUS_V2)
+    if route.startswith('combo:'):
+        return build_combo(route[len('combo:'):].split('+'))
     if route == 'current':
         return inrules.build(**base)
     if route == 'items-spec':
@@ -412,9 +439,9 @@ ROUTES = ['current', 'items-spec', 'items-all', 'unmerge', 'sentences', 'windows
           'fixed-128', 'semantic', 'fr-350', 'fr-1000']
 
 
-def chunking_study(extractor, routes=ROUTES):
+def chunking_study(extractor, routes=ROUTES, merge=False):
     use_extractor(None if extractor == 'pdfplumber-1.5' else extractor)
-    results = {}
+    results = _load('routes_chunking') if merge else {}
     for route in routes:
         results[route] = run(build_route(route), DEV_POOL)
         print(route, {m: sum(v[0] for v in r.values()) for m, r in results[route][0].items()}, flush=True)
@@ -471,7 +498,7 @@ if __name__ == '__main__':
                   and (ROOT / 'cache' / 'extractions' / f'{e}.json').exists()]
         test5(ex, rt, others, [r for r in ROUTES if r not in ('current', rt)])
     if cmd == 'chunking':
-        chunking_study(sys.argv[2], sys.argv[3:] or ROUTES)
+        chunking_study(sys.argv[2], sys.argv[3:] or ROUTES, merge=bool(sys.argv[3:]))
     if cmd == 'oracle':
         oracle_study(sys.argv[2:])
     if cmd == 'extractors':
