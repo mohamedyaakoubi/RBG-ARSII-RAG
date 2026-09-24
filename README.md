@@ -42,6 +42,7 @@ question ──► all-MiniLM-L6-v2 ──► cosine similarity, ranked ◄─�
 ```
 
 **Fragments** (`services/pdf_processor.py`) are text taken from the PDFs. Nothing is added that the PDFs do not say.
+- The pages are read with `pdftotext -layout` (poppler). Of 14 extractors compared in [audit/ROUTES.md](audit/ROUTES.md), it reads these sheets most faithfully ("10-100 ppm", where pdfplumber gives "10-10 0 ppm") and answers as many questions as any. Without poppler, the app falls back to pdfplumber.
 - One fragment per section of each data sheet (Dosage, Function, Storage, Allergens…), headed by the product and enzyme names read from the same PDF.
 - Neighboring sections are also grouped (Application + Dosage, Function + Dosage, page-1 product card), because a dosage line alone is too short to be found.
 - Tables are kept whole and also split into one fragment per row, with the column headings.
@@ -79,7 +80,10 @@ The challenge's example question in transparent mode returns one dosage fragment
 - **Single-product questions:** 53/60 → 56/60 right. It fixed 3 and broke none, but that is too few to rule out luck (p = 0.25).
 - **Questions naming two products, or a product and another family:** everything named was covered in 12 of 14 instead of 5 (8 gained, 1 lost; p = 0.039).
 
-Full method, per-component contributions and remaining limits are in [audit/IMPROVEMENT.md](audit/IMPROVEMENT.md). [audit/ROUTES.md](audit/ROUTES.md) compares 14 PDF extractors and 10 chunking methods, confirmed on fresh questions: the current pdfplumber extraction and section-based chunking are tied for best. [audit/AUDIT.md](audit/AUDIT.md) is an audit of the previous version. Its benchmark scores were real outputs, but the shown scores came from rewritten queries matched against text written into the database, and its results table did not match the code's output.
+Full method, per-component contributions and remaining limits are in [audit/IMPROVEMENT.md](audit/IMPROVEMENT.md). [audit/ROUTES.md](audit/ROUTES.md) compares 14 PDF extractors and 10 chunking methods, confirmed on fresh questions.
+- **Chunking:** the section-based chunking is tied for best.
+- **Extraction:** several extractors tie for right answers, and pdftotext `-layout` reads the pages most cleanly, so the app now uses it.
+- **Results with pdftotext:** the numbers above were measured with pdfplumber. With pdftotext `-layout`, every test set gets the same number of right answers, except one more in strict mode on TEST-5. [audit/AUDIT.md](audit/AUDIT.md) is an audit of the previous version. Its benchmark scores were real outputs, but the shown scores came from rewritten queries matched against text written into the database, and its results table did not match the code's output.
 
 **Limits.** Scores cannot tell when the corpus has no answer: unanswerable questions score in the same range as answerable ones. For a question about a product family (e.g. "xylanase"), dosages differ between products, so read the product name. The product filter needs the full code: a partial code ("MAX64" could be L, TG or HCF MAX64) or a typo is answered as before. A retrieval-trained multilingual model would help most with French questions, but the challenge imposes `all-MiniLM-L6-v2`.
 
@@ -91,6 +95,7 @@ Full method, per-component contributions and remaining limits are in [audit/IMPR
 
 - Python 3.9+
 - Docker & Docker Compose
+- poppler, for `pdftotext`: `apt install poppler-utils` (Debian/Ubuntu), `brew install poppler` (macOS), or `conda install -c conda-forge poppler` (Windows). Without it, the PDFs are read with pdfplumber.
 
 ### 1. Clone and install dependencies
 

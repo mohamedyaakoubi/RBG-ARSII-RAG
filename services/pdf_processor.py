@@ -14,6 +14,7 @@ A fragment is a dict:
   used to avoid showing the same content twice).
 """
 import re
+import subprocess
 import unicodedata
 from collections import Counter
 from pathlib import Path
@@ -29,10 +30,23 @@ logger = setup_logger(__name__)
 # EXTRACTION & NORMALISATION
 # ═══════════════════════════════════════════════════════════════════════════
 
-def extract_pages(path, x_tolerance=1.5):
-    """x_tolerance=1.5 keeps the spaces pdfplumber drops at its default (3)."""
-    with pdfplumber.open(path) as pdf:
-        return [pg.extract_text(x_tolerance=x_tolerance) or '' for pg in pdf.pages]
+def extract_pages(path):
+    """Page texts in reading order, read by pdftotext -layout (poppler).
+
+    Of 14 extractors compared in audit/ROUTES.md, it answers as many questions
+    as the best and reads the pages most faithfully: 23 times fewer broken or
+    merged words than pdfplumber, which splits words where the sheets contain
+    stray space characters ("10-10 0 ppm" for 10-100 ppm). Without poppler,
+    pdfplumber is used instead (the configuration measured before)."""
+    try:
+        text = subprocess.run(['pdftotext', '-enc', 'UTF-8', '-layout', str(path), '-'],
+                              capture_output=True, text=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError) as e:
+        logger.warning(f'pdftotext indisponible ({e}) : extraction avec pdfplumber')
+        with pdfplumber.open(path) as pdf:
+            return [pg.extract_text(x_tolerance=1.5) or '' for pg in pdf.pages]
+    pages = text.split('\f')
+    return pages[:-1] if pages and not pages[-1].strip() else pages
 
 
 def normalize(text):

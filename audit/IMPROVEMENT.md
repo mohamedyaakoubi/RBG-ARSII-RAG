@@ -95,7 +95,9 @@ The risk in tuning a system is fooling yourself: every look at a test set's fail
 - **Questions.** TEST-2, TEST-3 and TEST-4 were not hand-picked. What to ask (product or family, attribute, French or English) was drawn at random with a fixed seed ([`sample_test2_slots.py`](sample_test2_slots.py), [`sample_test3_slots.py`](sample_test3_slots.py), [`sample_test4_slots.py`](sample_test4_slots.py)), and I wrote a natural question for each draw. For TEST-4, how the code is written was drawn too. Unanswerable questions were added by hand.
 - **Relevance.** A result counts only if it comes from the right PDF and contains the actual answer, for example that product's real dosage range ([`eval_set.py`](eval_set.py)).
 - **Numbers.** Full tables with confidence intervals and paired tests are in [`results/test2.md`](results/test2.md), [`results/test3.md`](results/test3.md) and [`results/test4.md`](results/test4.md). TEST-3 turned out easier than TEST-2 for every system; the ranking of the systems is the same on both.
-- **The app is the measured system.** Ingesting the PDFs with the app gives the same 609 fragments as the experiment code. The app's pgvector search returns the same top 3 and scores for all 297 evaluation questions in both modes, product filter included (0 mismatches).
+- **The app is the measured system.** Ingesting the PDFs with the app gives the same 609 fragments as the experiment code, and its pgvector search returns the same top 3 and scores in both modes, product filter included (0 mismatches).
+  - The app now reads the PDFs with `pdftotext -layout` instead of pdfplumber ([ROUTES.md](ROUTES.md)). With that extractor, app and experiment code match on all 401 evaluation questions, DEV to TEST-5.
+  - The tables above were measured with pdfplumber. With `pdftotext -layout`, every test set has the same number of right answers, except one more in strict mode on TEST-5.
 
 ## 4. What is still out of reach inside the rules
 

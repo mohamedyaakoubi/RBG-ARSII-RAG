@@ -150,9 +150,10 @@ More fragments means more near-copies competing for three slots, and the right o
 
 **Not proven:** that no other chunking could do better. The oracle's bound is too loose. The one direction it points to that was not tested is one fragment per "Label: value" line of the French specification section (density, pH, solubility). TEST-5 misses suggested it, so only a new frozen test set could measure it, and it concerns a few questions at most.
 
-**An optional change that costs no answers:** extracting with pdftotext `-layout`.
+**A change that costs no answers, now made in the app:** extracting with pdftotext `-layout`.
 - It answers the same number of questions: 252 vs 251 known, 88 vs 88 on TEST-5.
 - It shows cleaner text to the user: "10-100 ppm" rather than "10-10 0 pp m", and "glycerides".
 - The pre-registered rule counts answers only, so this is a product choice, not a measured gain in right answers.
+- The app now reads the pages this way ([`services/pdf_processor.py`](../services/pdf_processor.py)), falling back to pdfplumber when poppler is missing. After re-ingestion, app and experiment code return the same top 3 and scores on all 401 evaluation questions in both modes. No stored fragment contains the old artifacts.
 
 **A lesson for the stop checklist ([ERROR_ANALYSIS.md](ERROR_ANALYSIS.md), step 6):** the selected configuration looked 4 questions better on the 281 known questions. On fresh questions it was 1 worse. Gains of a few questions are noise until a fresh set confirms them.
