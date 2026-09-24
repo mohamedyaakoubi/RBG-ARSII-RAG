@@ -36,4 +36,45 @@ No experiment proves a route optimal among all possible routes. This study makes
 
 ## 2. Extraction: right answers
 
-*In progress:* [results/routes_extractors.md](results/routes_extractors.md) holds the retrieval results for every extractor on the 297 known questions. Chunking routes, the span oracle and the TEST-5 confirmation follow.
+Each extractor feeds the unchanged pipeline (current chunking) and answers the 281 answerable known questions (DEV, TEST, TEST-2, TEST-3, TEST-4). A question is **fully answered** if a right answer is in the top 3, or, if it names several things, all of them are covered. Full table: [results/routes_extractors.md](results/routes_extractors.md).
+
+| extractor | fully answered, transparent | against current: gained / lost / p | fully answered, strict |
+|---|---:|---|---:|
+| pypdf, layout mode | **253** | +2 / −0 / 0.50 | 185 |
+| pdftotext `-layout`, PyMuPDF sorted, pdfplumber default (3) | 252 | +1 / −0 / 1.00 | 184 |
+| **pdfplumber 1.5 (current)**, and 1 or 2 (identical text) | **251** | – | 184 |
+| pdftotext | 250 | +1 / −2 / 1.00 | 182 |
+| pdfminer.six | 250 | +3 / −4 / 1.00 | 182 |
+| docling | 245 | +6 / −12 / 0.24 | 185 |
+| Tesseract OCR | 201 | +8 / −58 / < 0.001 | 144 |
+| PyMuPDF, pypdf, pdfium (drawing order) | 194–197 | about +4 / −60 / < 0.001 | 146–148 |
+
+- **Fidelity doesn't buy answers here.** pdftotext is 35 times cleaner than pdfplumber, yet answers one question fewer. Every extractor that keeps reading order lands within 2 questions of the current one, which is noise on 281 questions.
+- **Why:** a word split here and there changes a fragment's vector little, and relevance is judged with spaces removed. Every missed answer is present in a fragment, with any extractor.
+- **Reading order is what matters.** The drawing-order extractors separate each label from its value, which breaks the sections; they lose about 60 questions. OCR loses text and about 50 questions.
+- **Selected by the pre-registered rule: pypdf in layout mode.** It gains 2 and loses none (p = 0.50), a difference within noise that TEST-5 has to confirm or not.
+
+## 3. Chunking routes
+
+Every route on pypdf's layout-mode text, same questions ([results/routes_chunking.md](results/routes_chunking.md)).
+
+| route | fragments | fully answered, transparent | against current chunking: gained / lost / p | fully answered, strict |
+|---|---:|---:|---|---:|
+| current chunking (v2) | 609 | 253 | – | 185 |
+| + one fragment per specification item ("Lead: < 5 mg/kg") | 983 | 255 | +2 / −0 / 0.50 | 185 |
+| + the same for every section | 983 | 255 | +2 / −0 / 0.50 | 185 |
+| Physicochemical and Ionization status as their own sections | 677 | **255** | +2 / −0 / 0.50 | **186** |
+| both of the above | 949 | 255 | +2 / −0 / 0.50 | 186 |
+| + one fragment per sentence | 826 | 246 | +2 / −9 / 0.07 | 177 |
+| French sections split at 350 or 1000 characters | 609–613 | 253 | +0 / −0 / 1.00 | 185 |
+| fixed chunks of 128 tokens, overlapping by 64 | 313 | 226 | +16 / −43 / < 0.001 | 172 |
+| semantic chunking | 569 | 206 | +11 / −58 / < 0.001 | 134 |
+| sliding windows of 3 lines | 2068 | 207 | +9 / −55 / < 0.001 | 136 |
+| sliding windows of 6 lines | 663 | 191 | +11 / −73 / < 0.001 | 140 |
+
+- **The document's own structure is worth 27 to 62 questions.** That is the net loss of every route that ignores it (windows, fixed-size, semantic). This is the clearest result of the study.
+- **Finer fragments inside the structure gain at most 2 questions.** Four variants tie at 255 (items, items for every section, unmerged sections, both). Items for every section is identical to items for the specification sections, because the other sections have no labelled items.
+- **Sentences hurt.** A sentence is too short to carry its context.
+- **Selected, with the plan's secondary measures breaking the tie: unmerged sections.** It is highest in strict mode (186) and ranks the right answer first most often (202). Its gain over current chunking, +2 / −0, is again within noise.
+
+The configuration taken to TEST-5 is therefore **pypdf in layout mode, with Physicochemical and Ionization status as their own sections**. On the dev pool it has 255 fully answered, against 251 for the current system.
