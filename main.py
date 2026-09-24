@@ -12,22 +12,27 @@ def main():
     print(" "*20 + "🔍 RAG - Système de Recherche Sémantique")
     print("="*80 + "\n")
     
+    mode = config.SEARCH_MODE
     while True:
         print("\nMenu Principal:")
         print("1. Ingérer les documents PDFs")
-        print("2. Rechercher dans les documents")
+        print(f"2. Rechercher dans les documents (mode {mode})")
         print("3. Quitter")
+        print("4. Changer de mode (transparent / strict)")
         print("-"*80)
-        
-        choice = input("Choisissez une option (1/2/3): ").strip()
-        
+
+        choice = input("Choisissez une option (1/2/3/4): ").strip()
+
         if choice == "1":
             ingest_documents()
         elif choice == "2":
-            search_query()
+            search_query(mode)
         elif choice == "3":
             print("\n✓ Au revoir!")
             break
+        elif choice == "4":
+            mode = "strict" if mode == "transparent" else "transparent"
+            print(f"✓ Mode {mode}")
         else:
             print("❌ Option invalide. Veuillez réessayer.")
 
@@ -53,7 +58,7 @@ def ingest_documents():
     else:
         print("\n❌ Erreur lors de l'ingestion.")
 
-def search_query():
+def search_query(mode):
     """Rechercher une question dans les documents"""
     print("\n" + "-"*80)
     print("🔎 Recherche Sémantique")
@@ -66,7 +71,7 @@ def search_query():
         return
     
     print("\n⏳ Recherche en cours...\n")
-    results = search(question)
+    results = search(question, mode=mode)
     
     if results:
         display_results(question, results)

@@ -4,7 +4,7 @@
 
 | table | rows | distinct fragments |
 |---|---:|---:|
-| `embeddings` | 1635 | 924 |
+| `legacy_embeddings` | 1635 | 924 |
 | `audit_naive` | 180 | 145 |
 | `audit_faithful` | 456 | 456 |
 

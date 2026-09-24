@@ -8,7 +8,7 @@ Relevance works as in eval_set.py.
 """
 import re
 
-from audit.eval_set import AF, MALTO, AMG, GO, XYL, LIP, TG, AA, TDS, T, Q, _num
+from audit.eval_set import MALTO, XYL, AA, TDS, T, Q
 from audit.eval_set_v2 import fam, FUNCTION, STORAGE
 
 ACT = {'afresh101': '10000nmau/g', 'afresh202': '10950nmau/g', 'afresh303': '11000nmau/g',

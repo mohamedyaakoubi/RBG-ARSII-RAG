@@ -9,8 +9,13 @@ class Config:
     DB_NAME = os.getenv("DB_NAME")
     TOP_K = 3
     PDF_FOLDER = os.getenv("PDF_FOLDER")
-    CHUNK_SIZE = 500
-    CHUNK_OVERLAP = 80
     EMBEDDING_DIMENSION = 384
+    # "transparent": French questions are also embedded in English and questions
+    # naming several products are split per product (the formulation used is shown).
+    # "strict": the question is embedded exactly as typed.
+    SEARCH_MODE = os.getenv("SEARCH_MODE", "transparent")
+    # rows fetched from pgvector before duplicate contents are collapsed
+    CANDIDATES = int(os.getenv("CANDIDATES", "60"))
+    TRANSLATION_CACHE = os.getenv("TRANSLATION_CACHE", "cache/translations.json")
 
 config = Config()

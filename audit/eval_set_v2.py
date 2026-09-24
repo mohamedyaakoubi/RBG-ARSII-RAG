@@ -14,7 +14,7 @@ eval_set.py: right source PDF + fragment text contains the actual answer.
 import re
 
 from audit.eval_set import (AF, MALTO, AMG, GO, XYL, LIP, TG, AA, TDS,
-                            T, Q, dosage_target, _num)
+                            T, Q, dosage_target)
 
 FAMILY = {'alpha-amylase': AF, 'maltogenic amylase': MALTO, 'amyloglucosidase': AMG,
           'glucose oxidase': GO, 'xylanase': XYL, 'lipase': LIP, 'transglutaminase': TG}

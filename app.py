@@ -2,6 +2,8 @@
 Streamlit front-end for the RAG semantic search system.
 Launch:  streamlit run app.py
 """
+import html
+
 import streamlit as st
 from services.search_service import search
 from services.ingestion_data import ingest_pdfs
@@ -23,6 +25,7 @@ st.markdown("""
         padding: 1rem 1.2rem;
         margin-bottom: 1rem;
         border-radius: 0 8px 8px 0;
+        color: #1f2328;
     }
     .score-badge {
         display: inline-block;
@@ -35,8 +38,15 @@ st.markdown("""
     }
     .score-badge.medium { background: #FF9800; }
     .score-badge.low    { background: #f44336; }
+    .meta { margin-top: 0.4rem; font-size: 0.78rem; color: #666; }
+    .original { margin-top: 0.5rem; font-size: 0.85rem; color: #444; font-style: italic; }
 </style>
 """, unsafe_allow_html=True)
+
+MODES = {
+    "Transparent (recommandé)": "transparent",
+    "Strict (question telle quelle)": "strict",
+}
 
 # ── Sidebar ──────────────────────────────────────────────────────────────
 with st.sidebar:
@@ -46,10 +56,18 @@ with st.sidebar:
     st.divider()
 
     st.markdown("**Paramètres du système**")
-    st.markdown(f"- Modèle : `all-MiniLM-L6-v2`")
+    st.markdown("- Modèle : `all-MiniLM-L6-v2`")
     st.markdown(f"- Dimension : `{config.EMBEDDING_DIMENSION}`")
+    st.markdown("- Similarité : `cosinus`")
     st.markdown(f"- Top K : `{config.TOP_K}`")
-    st.markdown(f"- Chunk size : `{config.CHUNK_SIZE}`")
+    default = next(i for i, m in enumerate(MODES.values()) if m == config.SEARCH_MODE)
+    mode = MODES[st.radio("Mode de recherche", list(MODES), index=default)]
+    st.caption(
+        "Transparent : une question en français est aussi encodée en anglais (langue du modèle), "
+        "et une question sur plusieurs produits est découpée par produit. "
+        "La formulation utilisée est affichée sous chaque résultat.\n\n"
+        "Strict : la question est encodée exactement telle que saisie."
+    )
     st.divider()
 
     # Ingestion button
@@ -80,7 +98,7 @@ EXAMPLES = [
     "Améliorant de panification : quelles sont les quantités recommandées d'alpha-amylase, xylanase et d'Acide ascorbique ?",
     "What is the recommended dosage of lipase?",
     "Quel est l'effet de la xylanase sur le volume du pain ?",
-    "What is the function of ascorbic acid in bread making?",
+    "Quel dosage d'acide ascorbique pour une pâte surgelée ?",
     "Quelles sont les conditions de stockage de l'alpha-amylase ?",
 ]
 
@@ -109,12 +127,12 @@ if search_btn or (example_pick and not query.strip()):
         st.warning("Veuillez entrer une question.")
     else:
         with st.spinner("Recherche en cours…"):
-            results = search(active_query)
+            results = search(active_query, mode=mode)
 
         if not results:
             st.info("Aucun résultat trouvé.")
         else:
-            st.markdown(f"### Résultats pour : *{active_query}*")
+            st.markdown(f"### Résultats pour : *{html.escape(active_query)}*")
             st.markdown("---")
 
             for res in results:
@@ -126,28 +144,21 @@ if search_btn or (example_pick and not query.strip()):
                     badge_cls = " medium"
                 else:
                     badge_cls = " low"
+                # one line of HTML: a blank line would end Markdown's HTML block
+                card = "".join([
+                    '<div class="result-card">',
+                    '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">',
+                    f"<strong>Résultat {res['rank']}</strong>",
+                    f'<span class="score-badge{badge_cls}">Score : {score:.4f}</span></div>',
+                    f'<div style="font-size:0.95rem; line-height:1.6;">{html.escape(res["texte"])}</div>',
+                    f'<div class="original">Texte original : {html.escape(res["original"])}</div>' if res["original"] else "",
+                    f'<div class="meta">Source : {html.escape(res["fichier"])} · '
+                    f'similarité cosinus avec « {html.escape(res["formulation"])} »</div>',
+                    "</div>",
+                ])
+                st.markdown(card, unsafe_allow_html=True)
 
-                st.markdown(
-                    f"""
-                    <div class="result-card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-                            <strong>Résultat {res['rank']}</strong>
-                            <span class="score-badge{badge_cls}">Score : {score:.4f}</span>
-                        </div>
-                        <div style="font-size:0.95rem; line-height:1.6;">
-                            {res['texte']}
-                        </div>
-                        <div style="margin-top:0.4rem; font-size:0.75rem; color:#888;">
-                            Document ID : {res['id_document']}
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-            # Summary metrics
-            scores = [r["score"] for r in results]
-            col_a, col_b, col_c = st.columns(3)
-            col_a.metric("Top Score", f"{max(scores):.4f}")
-            col_b.metric("Avg Score", f"{sum(scores)/len(scores):.4f}")
-            col_c.metric("Fragments", len(results))
+            st.caption(
+                "Score = similarité cosinus (all-MiniLM-L6-v2) entre la formulation indiquée et le fragment. "
+                "Ce n'est pas une probabilité d'exactitude : vérifiez la réponse dans le texte."
+            )

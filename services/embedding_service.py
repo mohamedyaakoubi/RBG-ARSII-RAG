@@ -14,4 +14,8 @@ def create_embedding(text):
     except Exception as e:
         logger.error(f"Erreur lors de la création de l'embedding: {e}")
         return None
-    
+
+
+def embed_texts(texts):
+    """Unit-length embeddings of several texts (batched)."""
+    return model.encode(list(texts), batch_size=64, normalize_embeddings=True)

@@ -8,8 +8,8 @@ For each README cell: does the score reproduce, does the quoted fragment match
 the fragment that produced that score, and does the quoted text exist in the
 PDFs at all? Also reports the honest score, cosine(question as typed, returned
 fragment), which is what the challenge asks to display.
-Writes audit/results/readme_check.md. Needs the `embeddings` table built by
-services/ingestion_data.py (python -m audit.evaluate builds it).
+Writes audit/results/readme_check.md. Needs the `legacy_embeddings` table built by
+audit/legacy/ingestion_data.py, the original pipeline (python -m audit.evaluate builds it).
 """
 import logging
 import re
@@ -24,7 +24,7 @@ import numpy as np
 import pdfplumber
 
 from services.embedding_service import model
-from services.search_service import search
+from audit.legacy.search_service import search
 
 COMPETITION = "Améliorant de panification : quelles sont les quantités recommandées d'alpha-amylase, xylanase et d'Acide ascorbique ?"
 

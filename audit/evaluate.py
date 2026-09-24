@@ -32,8 +32,8 @@ import psycopg2
 
 from config.settings import config
 from services.embedding_service import model            # all-MiniLM-L6-v2, as imposed
-import services.search_service as old_search_module
-from services.ingestion_data import ingest_pdfs
+import audit.legacy.search_service as old_search_module
+from audit.legacy.ingestion_data import ingest_pdfs
 from audit.eval_set import DEV, TEST, doc_key, relevant
 from audit.pipelines import EXPLORATION, PIPELINES, build_table
 
@@ -190,8 +190,8 @@ def old_search(table, question):
 # ── Systems ────────────────────────────────────────────────────────────────
 
 SYSTEMS = {
-    'old_as_submitted':        ('embeddings', 'relaxed', lambda q: old_search('embeddings', q)),
-    'old_db+strict_search':    ('embeddings', 'strict',  lambda q: cosine_topk('embeddings', embed(q))),
+    'old_as_submitted':        ('legacy_embeddings', 'relaxed', lambda q: old_search('legacy_embeddings', q)),
+    'old_db+strict_search':    ('legacy_embeddings', 'strict',  lambda q: cosine_topk('legacy_embeddings', embed(q))),
     'naive+strict_search':     ('audit_naive', 'strict', lambda q: cosine_topk('audit_naive', embed(q))),
     'naive+old_search':        ('audit_naive', 'relaxed', lambda q: old_search('audit_naive', q)),
     'faithful+strict_search':  ('audit_faithful', 'strict', lambda q: cosine_topk('audit_faithful', embed(q))),
@@ -361,9 +361,9 @@ def main():
 
     pdfs = list(Path(config.PDF_FOLDER).glob('*.pdf'))   # same order as ingest_pdfs()
     old_ids = {i: doc_key(p.name) for i, p in enumerate(pdfs, 1)}
-    id2doc = {'embeddings': old_ids}
+    id2doc = {'legacy_embeddings': old_ids}
     if not args.reuse:
-        print('building original table `embeddings` with services/ingestion_data.py ...')
+        print('building original table `legacy_embeddings` with audit/legacy (the original pipeline) ...')
         ingest_pdfs(config.PDF_FOLDER)
     for name, chunker in PIPELINES.items():
         table = f'audit_{name}'

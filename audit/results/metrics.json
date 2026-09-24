@@ -1,6 +1,6 @@
 {
  "tables": {
-  "embeddings": {
+  "legacy_embeddings": {
    "rows": 1635,
    "distinct_fragments": 924
   },
@@ -15,7 +15,7 @@
  },
  "systems": {
   "old_as_submitted": {
-   "table": "embeddings",
+   "table": "legacy_embeddings",
    "mode": "relaxed",
    "dev": {
     "n_single": 13,
@@ -55,7 +55,7 @@
    }
   },
   "old_db+strict_search": {
-   "table": "embeddings",
+   "table": "legacy_embeddings",
    "mode": "strict",
    "dev": {
     "n_single": 13,

@@ -34,7 +34,7 @@ from pathlib import Path
 
 def pg_system(table, fn):
     pdfs = list(Path(config.PDF_FOLDER).glob('*.pdf'))
-    ids = ({i: doc_key(p.name) for i, p in enumerate(pdfs, 1)} if table == 'embeddings'
+    ids = ({i: doc_key(p.name) for i, p in enumerate(pdfs, 1)} if table == 'legacy_embeddings'
            else {i: doc_key(p.name) for i, p in enumerate(sorted(pdfs), 1)})
 
     def run(q):
@@ -85,7 +85,7 @@ def main():
     v1 = inrules.Index(inrules.build(**inrules.FINAL_CORPUS))
     v2 = inrules.Index(inrules.build(**inrules.FINAL_CORPUS_V2))
     systems = {
-        'old_as_submitted': pg_system('embeddings', lambda q: old_search('embeddings', q)),
+        'old_as_submitted': pg_system('legacy_embeddings', lambda q: old_search('legacy_embeddings', q)),
         'faithful+strict': pg_system('audit_faithful', lambda q: cosine_topk('audit_faithful', embed(q))),
         'in-rules v1 S (strict)': inrules_system(v1, 'S'),
         'in-rules v1 S+ (transparent preprocessing)': inrules_system(v1, 'S+'),
