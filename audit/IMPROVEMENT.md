@@ -107,6 +107,10 @@ The risk in tuning a system is fooling yourself: every look at a test set's fail
 - **Scores do not tell you when there is no answer.** Unanswerable questions got top scores of 0.44–0.73, inside the range of answerable ones (medians 0.61–0.66). The UI says so under the results.
 - **Near-identical products.** For a family-level question, three of nine sibling products are shown and the choice among them is essentially arbitrary. Their dosages differ, so read the product name.
 
+**Extraction and chunking were compared exhaustively afterwards** ([ROUTES.md](ROUTES.md)): 14 extractors and 10 chunking routes, confirmed on a fresh set (TEST-5).
+- The current choices are tied for best.
+- Chunking that ignores the sheets' structure loses answers, and putting every possible fragment in the index loses 35 of 281.
+
 The biggest remaining lever is outside the rules. With the same fragments, a retrieval-trained multilingual 384-d model (`multilingual-e5-small`) fixes most French failures in strict mode (AUDIT.md §4.6). That is worth raising with the organizers.
 
 ## 5. Using it

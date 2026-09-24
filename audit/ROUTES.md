@@ -2,6 +2,17 @@
 
 The plan was written and frozen before any of this ran: [ROUTES_PLAN.md](ROUTES_PLAN.md) (commit `4e21bf7`, with TEST-5).
 
+## Short answer
+
+- **Extraction:** for right answers, the current pdfplumber setup is tied for best. No extractor answers more fresh questions. It is not the most faithful, though: pdftotext `-layout` makes 23 times fewer word-break errors ("10-100 ppm" rather than "10-10 0 pp m") and answers exactly as many.
+- **Chunking:** the current section-based chunking is tied for best on fresh questions.
+  - Routes that ignore the sheets' structure lose up to 62 of 281 questions.
+  - Putting every possible fragment in the index loses 35.
+- **What cannot be proven:** that no chunking at all could do better.
+  - For most misses, the span oracle finds a fragment that would win if chosen knowing the answer.
+  - The same fragments, put together, make results worse.
+  - So the limit is established across everything tested, not mathematically.
+
 ## What can be proven
 
 No experiment proves a route optimal among all possible routes. This study makes three narrower claims:
@@ -95,3 +106,53 @@ TEST-5 is 100 fresh questions plus 4 unanswerable ones. It was frozen with the p
   - routes that ignore the structure: 77–82;
   - item fragments and French section sizes: 88; sentences: 87.
 - **In strict mode,** item fragments reach 63 (+2 / −0) and a few extractors 62 (+1). All within noise.
+
+## 5. The span oracle: could any chunking do better?
+
+**The test.** For every single-answer question the current system misses, the oracle tries every verbatim fragment of the right document:
+- every run of consecutive lines, with the product header, also after its section heading;
+- about 66,000 candidates per extractor.
+
+It asks whether the best of them would enter the top 3, with the rest of the index unchanged ([results/routes_oracle.md](results/routes_oracle.md), [results/routes_oracle_test5.md](results/routes_oracle_test5.md)).
+
+| current extractor | misses, transparent | some fragment would win | no fragment can | misses, strict | some would win | none can |
+|---|---:|---:|---:|---:|---:|---:|
+| known questions | 20 | 18 | 2 | 66 | 51 | 15 |
+| TEST-5 | 10 | 10 | 0 | 27 | 23 | 4 |
+
+The other extractors give nearly the same numbers.
+
+- **The bound does not close.** For most misses there is a fragment that would win, but it is picked for one question, knowing where the answer is.
+- **The winners are of three kinds:**
+  - one-line fragments: "BVZyme L MAX X (lipase) - Lead: < 5 mg/kg", "Ascorbic Acid (E300) - Density: ~1.65 g/cm3";
+  - the letterhead under a product name, which version 1 of the corpus used and which hijacked unrelated questions;
+  - page-long runs that win by a hair.
+- **The misses that no fragment can fix are proven to be beyond chunking.** In strict mode they are mostly French questions: "teneur maximale en plomb" scores at most 0.17 against any cut of the English sheets.
+
+## 6. Post-hoc: every possible fragment at once
+
+This test is not in the plan. I added it after the oracle to check whether its fragments still win when they compete. All 65,772 candidates go into one index, and a fragment is skipped when its lines are already shown ([results/routes_all_spans.md](results/routes_all_spans.md)).
+
+| | fully answered, transparent | against current | fully answered, strict |
+|---|---:|---|---:|
+| known questions: current chunking (609 fragments) | **251/281** | – | **184/281** |
+| known questions: every possible fragment | 216/281 | +12 / −47, p < 0.001 | 147/281 |
+| TEST-5: current chunking | **88/100** | – | **61/100** |
+| TEST-5: every possible fragment | 75/100 | +5 / −18, p = 0.01 | 50/100 |
+
+More fragments means more near-copies competing for three slots, and the right one no longer stands out. Chunking pushed to the maximum is clearly worse. The oracle's wins exist only when the answer is known in advance.
+
+## 7. Conclusion
+
+**Proven within everything tested, and confirmed on fresh questions:** the current system is tied for best.
+- Extraction needs reading order. Beyond that, fidelity does not change the answers.
+- Chunking needs the sheets' own structure. Finer, coarser or structure-free cuts do not help.
+
+**Not proven:** that no other chunking could do better. The oracle's bound is too loose. The one direction it points to that was not tested is one fragment per "Label: value" line of the French specification section (density, pH, solubility). TEST-5 misses suggested it, so only a new frozen test set could measure it, and it concerns a few questions at most.
+
+**An optional change that costs no answers:** extracting with pdftotext `-layout`.
+- It answers the same number of questions: 252 vs 251 known, 88 vs 88 on TEST-5.
+- It shows cleaner text to the user: "10-100 ppm" rather than "10-10 0 pp m", and "glycerides".
+- The pre-registered rule counts answers only, so this is a product choice, not a measured gain in right answers.
+
+**A lesson for the stop checklist ([ERROR_ANALYSIS.md](ERROR_ANALYSIS.md), step 6):** the selected configuration looked 4 questions better on the 281 known questions. On fresh questions it was 1 worse. Gains of a few questions are noise until a fresh set confirms them.
